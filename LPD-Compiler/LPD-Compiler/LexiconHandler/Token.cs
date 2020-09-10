@@ -10,5 +10,11 @@ namespace LPD_Compiler.LexiconHandler
     {
         public String simbolo;
         public String lexema;
+
+        public Token(String simbolo, String lexema)
+        {
+            this.simbolo = simbolo;
+            this.lexema = lexema;
+        }
     }
 }
