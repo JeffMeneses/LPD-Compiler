@@ -9,14 +9,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LPD_Compiler.FileHandler;
 using LPD_Compiler.LexiconHandler;
+using LPD_Compiler.CompilerHandler;
 
 namespace LPD_Compiler
 {
     public partial class Form1 : Form
     {
-        LpdFile lpdFile = new LpdFile();
-        Lexicon lexicon = new Lexicon();
-        
+        Compiler compiler = new Compiler();
 
         public Form1()
         {
@@ -35,13 +34,8 @@ namespace LPD_Compiler
 
         private void abrirToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            List<string> lines = new List<string>();
 
-            lpdFile.openLpdFile();
-            lines = lpdFile.readFile(lpdFile.name);
-
-            lexicon.lexicalAnalyser(lines);
-            lexicon.showListToken();
+            compiler.runCompiler();
         }
     }
 }

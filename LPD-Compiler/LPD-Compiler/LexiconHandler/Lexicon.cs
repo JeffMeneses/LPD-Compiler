@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LPD_Compiler.FileHandler;
 
 namespace LPD_Compiler.LexiconHandler
 {
@@ -11,52 +12,73 @@ namespace LPD_Compiler.LexiconHandler
     {
         public List<Token> listTokens = new List<Token>();
 
-        public void lexicalAnalyser(List<String> lines)
+        public void lexicalAnalyser(LpdFile lpdfile)
         {
+            char character = lpdfile.getCharacter();
+            int length = lpdfile.content.Length;
+            Token token;
 
-        }
-
-        public void ler()
-        {
-
-        }
-
-        public void getToken(char caracter)
-        {
-
-           if(Char.IsNumber(caracter) == true)
-           {
-                //trataDigito(caracter);
-           }
-           else
-           {
-                if(Char.IsLetter(caracter) == true)
+            while (lpdfile.i < length)
+            {
+                while((character == '{' || character == ' ') && lpdfile.i < length)
                 {
-                    //trataIdPalavraReservada(caracter);
+                    if(character == '{')
+                    {
+                        while(character != '}' && lpdfile.i < length)
+                        {
+                            character = lpdfile.getCharacter();
+                        }
+                        character = lpdfile.getCharacter();
+                    }
+                    while (character == ' ' && lpdfile.i < length)
+                    {
+                        character = lpdfile.getCharacter();
+                    }
+                }
+                if(lpdfile.i < length)
+                {
+                    token = getToken(character, lpdfile);
+                    listTokens.Add(token);
+                }
+            }
+        }
+
+        public Token getToken(char character, LpdFile lpdFile)
+        {
+
+           if(Char.IsNumber(character) == true)
+           {
+                return trataDigito(character, lpdFile);
+            }
+            else
+           {
+                if(Char.IsLetter(character) == true)
+                {
+                    return trataIdPalavraReservada(character, lpdFile);
                 }
                 else
                 {
-                    if(caracter == ':')
+                    if(character == ':')
                     {
-                        //trataAtribuição(caracter);
+                        return trataAtribuicao(character, lpdFile);
                     }
                     else
                     {
-                        if(caracter == '+' || caracter == '-' || caracter == '*')
+                        if(character == '+' || character == '-' || character == '*')
                         {
-                            //trataOperadorAritmetico(caracter);
+                            //return trataOperadorAritmetico(character, lpdFile);
                         }
                         else
                         {
-                            if(caracter == '<' || caracter == '>' || caracter == '=')
+                            if(character == '<' || character == '>' || character == '=')
                             {
-                                //trataOperadorRelacional(caracter);
+                                //return trataOperadorRelacional(character, lpdFile);
                             }
                             else
                             {
-                                if (caracter == ';' || caracter == '(' || caracter == ')' || caracter == '.')
+                                if (character == ';' || character == '(' || character == ')' || character == '.')
                                 {
-                                    //trataPontuacao(caracter);
+                                    //return trataPontuacao(character, lpdFile);
                                 }
                                 else
                                 {
@@ -68,123 +90,134 @@ namespace LPD_Compiler.LexiconHandler
                 }
            }
 
-            
+            return null;
         }
 
         // Trata X
 
-        public void trataDigito(char caracter)
+        public Token trataDigito(char character, LpdFile lpdFile)
         {
+            Token token = new Token();
             string num;
-            num = String.Copy(Char.ToString(caracter));
+            num = String.Copy(Char.ToString(character));
             
-            //ler(caracter);
-            while(Char.IsNumber(caracter))
+            character = lpdFile.getCharacter();
+            while(Char.IsNumber(character))
             {
-                num = string.Concat(caracter);
-                //ler(caracter);
+                num = num + character;
+                character = lpdFile.getCharacter();
             }
-            listTokens.Add(new Token("snumero", num));
+            token.simbolo = "snumero";
+            token.lexema = num;
+
+            return token;
         }
 
-        public void trataIdPalavraReservada(char caracter)
+        public Token trataIdPalavraReservada(char character, LpdFile lpdFile)
         {
+            Token token = new Token();
             string id;
-            id = String.Copy(Char.ToString(caracter));
+            id = String.Copy(Char.ToString(character));
 
-            //ler(caracter);
+            character = lpdFile.getCharacter();
 
-            while (Char.IsLetter(caracter))
+            while (Char.IsLetter(character))
             {
-                id = string.Concat(caracter);
-                //ler(caracter);
+                id = id + character;
+                character = lpdFile.getCharacter();
             }
 
+            token.lexema = id;
             switch (id)
             {
                 case "programa":
-                    listTokens.Add(new Token("sprograma", id));
+                    token.simbolo = "sprograma";
                     break;
                 case "se":
-                    listTokens.Add(new Token("sse", id));
+                    token.simbolo = "sse";
                     break;
                 case "senao":
-                    listTokens.Add(new Token("ssenao", id));
+                    token.simbolo = "ssenao";
                     break;
                 case "enquanto":
-                    listTokens.Add(new Token("senquanto", id));
+                    token.simbolo = "senquanto";
                     break;
                 case "faca":
-                    listTokens.Add(new Token("sfaca", id));
+                    token.simbolo = "sfaca";
                     break;
                 case "inicio":
-                    listTokens.Add(new Token("sinicio", id));
+                    token.simbolo = "sinicio";
                     break;
                 case "fim":
-                    listTokens.Add(new Token("sfim", id));
+                    token.simbolo = "sfim";
                     break;
                 case "escreva":
-                    listTokens.Add(new Token("sescreva", id));
+                    token.simbolo = "sescreva";
                     break;
                 case "leia":
-                    listTokens.Add(new Token("sleia", id));
+                    token.simbolo = "sleia";
                     break;
                 case "var":
-                    listTokens.Add(new Token("svar", id));
+                    token.simbolo = "svar";
                     break;
                 case "inteiro":
-                    listTokens.Add(new Token("sinteiro", id));
+                    token.simbolo = "sinteiro";
                     break;
                 case "booleano":
-                    listTokens.Add(new Token("sbooleano", id));
+                    token.simbolo = "sbooleano";
                     break;
                 case "verdadeiro":
-                    listTokens.Add(new Token("sverdadeiro", id));
+                    token.simbolo = "sverdadeiro";
                     break;
                 case "falso":
-                    listTokens.Add(new Token("sfalso", id));
+                    token.simbolo = "sfalso";
                     break;
                 case "procedimento":
-                    listTokens.Add(new Token("sprocedimento", id));
+                    token.simbolo = "sprocedimento";
                     break;
                 case "funcao":
-                    listTokens.Add(new Token("sfuncao", id));
+                    token.simbolo = "sfuncao";
                     break;
                 case "div":
-                    listTokens.Add(new Token("sdiv", id));
+                    token.simbolo = "sdiv";
                     break;
                 case "e":
-                    listTokens.Add(new Token("se", id));
+                    token.simbolo = "se";
                     break;
                 case "ou":
-                    listTokens.Add(new Token("sou", id));
+                    token.simbolo = "sou";
                     break;
                 case "nao":
-                    listTokens.Add(new Token("snao", id));
+                    token.simbolo = "snao";
                     break;
                 default:
-                    listTokens.Add(new Token("sidentificador", id));
+                    token.simbolo = "sidentificador";
                     break;
             }
+
+            return token;
         }
 
-        public void trataAtribuicao(char caracter)
+        public Token trataAtribuicao(char character, LpdFile lpdFile)
         {
+            Token token = new Token();
             string atribuicao;
-            atribuicao = String.Copy(Char.ToString(caracter));
+            atribuicao = String.Copy(Char.ToString(character));
 
-            //caracter = ler();
+            character = lpdFile.getCharacter();
 
-            if(caracter == '=')
+            if (character == '=')
             {
-                atribuicao = String.Copy(Char.ToString(caracter)); 
-                listTokens.Add(new Token("satribuicao", atribuicao));
+                atribuicao = String.Copy(Char.ToString(character));
+                token.simbolo = "satribuicao";
             }
             else
             {
-                listTokens.Add(new Token("sdoispontos", atribuicao));
+                token.simbolo = "sdoispontos";
             }
-           
+            token.lexema = atribuicao;
+
+            return token;
         }
 
         // Test function
