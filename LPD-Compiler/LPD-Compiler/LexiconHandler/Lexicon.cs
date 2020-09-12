@@ -11,10 +11,11 @@ namespace LPD_Compiler.LexiconHandler
     class Lexicon
     {
         public List<Token> listTokens = new List<Token>();
+        char character;
 
         public void lexicalAnalyser(LpdFile lpdfile)
         {
-            char character = lpdfile.getCharacter();
+            character = lpdfile.getCharacter();
             int length = lpdfile.content.Length;
             Token token;
 
@@ -37,48 +38,48 @@ namespace LPD_Compiler.LexiconHandler
                 }
                 if(lpdfile.i < length)
                 {
-                    token = getToken(character, lpdfile);
+                    token = getToken(lpdfile);
                     listTokens.Add(token);
                 }
             }
         }
 
-        public Token getToken(char character, LpdFile lpdFile)
+        public Token getToken(LpdFile lpdFile)
         {
 
            if(Char.IsNumber(character) == true)
            {
-                return trataDigito(character, lpdFile);
+                return trataDigito(lpdFile);
             }
             else
            {
                 if(Char.IsLetter(character) == true)
                 {
-                    return trataIdPalavraReservada(character, lpdFile);
+                    return trataIdPalavraReservada(lpdFile);
                 }
                 else
                 {
                     if(character == ':')
                     {
-                        return trataAtribuicao(character, lpdFile);
+                        return trataAtribuicao(lpdFile);
                     }
                     else
                     {
                         if(character == '+' || character == '-' || character == '*')
                         {
-                            //return trataOperadorAritmetico(character, lpdFile);
+                            return trataOperadorAritmetico(lpdFile);
                         }
                         else
                         {
                             if(character == '<' || character == '>' || character == '=')
                             {
-                                //return trataOperadorRelacional(character, lpdFile);
+                                return trataOperadorRelacional(lpdFile);
                             }
                             else
                             {
                                 if (character == ';' || character == '(' || character == ')' || character == '.')
                                 {
-                                    //return trataPontuacao(character, lpdFile);
+                                    return trataPontuacao(lpdFile);
                                 }
                                 else
                                 {
@@ -95,7 +96,7 @@ namespace LPD_Compiler.LexiconHandler
 
         // Trata X
 
-        public Token trataDigito(char character, LpdFile lpdFile)
+        public Token trataDigito(LpdFile lpdFile)
         {
             Token token = new Token();
             string num;
@@ -113,7 +114,7 @@ namespace LPD_Compiler.LexiconHandler
             return token;
         }
 
-        public Token trataIdPalavraReservada(char character, LpdFile lpdFile)
+        public Token trataIdPalavraReservada(LpdFile lpdFile)
         {
             Token token = new Token();
             string id;
@@ -121,7 +122,7 @@ namespace LPD_Compiler.LexiconHandler
 
             character = lpdFile.getCharacter();
 
-            while (Char.IsLetter(character))
+            while (Char.IsLetter(character) || Char.IsNumber(character) || character == '_')
             {
                 id = id + character;
                 character = lpdFile.getCharacter();
@@ -146,7 +147,7 @@ namespace LPD_Compiler.LexiconHandler
                     token.simbolo = "sfaca";
                     break;
                 case "inicio":
-                    token.simbolo = "sinicio";
+                    token.simbolo = "sinício";
                     break;
                 case "fim":
                     token.simbolo = "sfim";
@@ -198,7 +199,7 @@ namespace LPD_Compiler.LexiconHandler
             return token;
         }
 
-        public Token trataAtribuicao(char character, LpdFile lpdFile)
+        public Token trataAtribuicao(LpdFile lpdFile)
         {
             Token token = new Token();
             string atribuicao;
@@ -216,6 +217,86 @@ namespace LPD_Compiler.LexiconHandler
                 token.simbolo = "sdoispontos";
             }
             token.lexema = atribuicao;
+
+            return token;
+        }
+
+        public Token trataOperadorAritmetico(LpdFile lpdFile)
+        {
+            Token token = new Token();
+
+            if (character == '+')
+                token.simbolo = "smais";
+            else if (character == '-')
+                token.simbolo = "smenos";
+            else if (character == '*')
+                token.simbolo = "smult";
+
+            token.lexema = character.ToString();
+            character = lpdFile.getCharacter();
+
+            return token;
+        }
+
+        public Token trataOperadorRelacional(LpdFile lpdFile)
+        {
+            Token token = new Token();
+            string operador = String.Copy(Char.ToString(character));
+
+            character = lpdFile.getCharacter();
+
+            if(character == '=')
+            {
+                operador = operador + character;
+                character = lpdFile.getCharacter();
+            }
+
+            token.lexema = operador;
+            switch(operador)
+            {
+                case "<":
+                    token.simbolo = "smenor";
+                    break;
+                case ">":
+                    token.simbolo = "smaior";
+                    break;
+                case "=":
+                    token.simbolo = "sig";
+                    break;
+                case "!=":
+                    token.simbolo = "sdif";
+                    break;
+                case "<=":
+                    token.simbolo = "smenorig";
+                    break;
+                case ">=":
+                    token.simbolo = "smaiorig";
+                    break;
+                default:
+                    token.simbolo = "ERRO"; // PLACEHOLDER: Throws error
+                    break;
+            }
+
+            return token;
+        }
+
+        public Token trataPontuacao(LpdFile lpdFile)
+        {
+            Token token = new Token();
+
+            if (character == ';')
+                token.simbolo = "sponto_vírgula";
+            else if (character == ',')
+                token.simbolo = "svírgula";
+            else if (character == '(')
+                token.simbolo = "sabre_parênteses";
+            else if (character == ')')
+                token.simbolo = "sfecha_parênteses";
+            else if (character == '.')
+                token.simbolo = "sponto";
+
+            token.lexema = character.ToString();
+            character = lpdFile.getCharacter();
 
             return token;
         }
