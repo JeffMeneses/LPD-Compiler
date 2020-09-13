@@ -1,6 +1,6 @@
 programa exemplo6;
-var x, y: integer;
-procedimento p;
+var x/*, y:* int*eger;
+proc/edi**mento*/ p;
 var z: integer;
 inicio
 z:= x;

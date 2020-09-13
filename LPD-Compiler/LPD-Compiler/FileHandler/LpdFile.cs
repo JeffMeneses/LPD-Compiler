@@ -11,8 +11,10 @@ namespace LPD_Compiler.FileHandler
     class LpdFile
     {
         public string name;
-        public string content;
+        public string[] content;
         public int i = 0;
+        public int currentLine = 0;
+        public int countLines = 0;
 
         public void openLpdFile()
         {
@@ -29,14 +31,34 @@ namespace LPD_Compiler.FileHandler
 
         public void readFile(string fname)
         {
-            content = File.ReadAllText(fname);
+            content = File.ReadAllLines(fname);
+            countLines = File.ReadAllLines(fname).Count();
         }
 
         public char getCharacter()
         {
-            char character = content[i];
+            char character = ' ';
+            if (isIndexOutofBounds() == true)
+            {
+                i = 0;
+                currentLine++;
+            }
+            if (!isEndOfFile()) character = content[currentLine][i];
+
             i++;
             return character;
+        }
+
+        public bool isIndexOutofBounds()
+        {
+            if (i >= content[currentLine].Length) return true;
+            return false;
+        }
+
+        public bool isEndOfFile()
+        {
+            if (currentLine >= countLines) return true;
+            return false;
         }
     }
 }

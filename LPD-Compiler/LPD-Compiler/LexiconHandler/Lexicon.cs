@@ -19,27 +19,55 @@ namespace LPD_Compiler.LexiconHandler
             int length = lpdfile.content.Length;
             Token token;
 
-            while (lpdfile.i < length)
+            while (!lpdfile.isEndOfFile())
             {
-                while((character == '{' || character == ' ') && lpdfile.i < length)
+                while((character == '{' || character == '/' || character == ' ') && !lpdfile.isEndOfFile())
                 {
                     if(character == '{')
                     {
-                        while(character != '}' && lpdfile.i < length)
+                        while(character != '}' && !lpdfile.isEndOfFile())
                         {
                             character = lpdfile.getCharacter();
                         }
                         character = lpdfile.getCharacter();
                     }
-                    while (character == ' ' && lpdfile.i < length)
+                    if(character == '/')
+                    {
+                        character = lpdfile.getCharacter();
+                        if(character == '*')
+                        {
+                            int starFlag = 0;
+                            while((character != '/' || starFlag != 1) && !lpdfile.isEndOfFile())
+                            {
+                                character = lpdfile.getCharacter();
+                                if (character == '*')
+                                {
+                                    starFlag = 1;
+                                    if(!lpdfile.isEndOfFile()) character = lpdfile.getCharacter();
+                                    if(character != '/') starFlag = 0;
+                                }                         
+                            }
+                            character = lpdfile.getCharacter();
+                        }
+                        //else ERROR
+                    }
+                    while (character == ' ' && !lpdfile.isEndOfFile())
                     {
                         character = lpdfile.getCharacter();
                     }
                 }
-                if(lpdfile.i < length)
+                if(!lpdfile.isEndOfFile())
                 {
-                    token = getToken(lpdfile);
-                    listTokens.Add(token);
+                    try
+                    {
+                        token = getToken(lpdfile);
+                        listTokens.Add(token);
+                    }
+                    catch (LexiconException ex)
+                    {
+                        MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
+                    }                  
                 }
             }
         }
@@ -77,13 +105,13 @@ namespace LPD_Compiler.LexiconHandler
                             }
                             else
                             {
-                                if (character == ';' || character == '(' || character == ')' || character == '.')
+                                if (character == ';' || character == '(' || character == ')' || character == '.' || character == ',')
                                 {
                                     return trataPontuacao(lpdFile);
                                 }
                                 else
                                 {
-                                    //ERRO
+                                    throw new LexiconException(lpdFile.currentLine+1); 
                                 }
                             }
                         }
@@ -91,7 +119,6 @@ namespace LPD_Compiler.LexiconHandler
                 }
            }
 
-            return null;
         }
 
         // Trata X
@@ -209,8 +236,9 @@ namespace LPD_Compiler.LexiconHandler
 
             if (character == '=')
             {
-                atribuicao = String.Copy(Char.ToString(character));
+                atribuicao = atribuicao + character;
                 token.simbolo = "satribuicao";
+                character = lpdFile.getCharacter();
             }
             else
             {
@@ -273,9 +301,7 @@ namespace LPD_Compiler.LexiconHandler
                     token.simbolo = "smaiorig";
                     break;
                 default:
-                    token.simbolo = "ERRO"; // PLACEHOLDER: Throws error
-                    break;
-            }
+                    throw new LexiconException(lpdFile.currentLine + 1);            }
 
             return token;
         }

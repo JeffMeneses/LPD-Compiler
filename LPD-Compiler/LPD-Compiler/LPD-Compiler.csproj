@@ -55,6 +55,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="LexiconHandler\Lexicon.cs" />
+    <Compile Include="LexiconHandler\LexiconException.cs" />
     <Compile Include="LexiconHandler\Token.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
