@@ -21,7 +21,7 @@ namespace LPD_Compiler.LexiconHandler
 
             while (!lpdfile.isEndOfFile())
             {
-                while((character == '{' || character == ' ') && !lpdfile.isEndOfFile())
+                while((character == '{' || character == '/' || character == ' ') && !lpdfile.isEndOfFile())
                 {
                     if(character == '{')
                     {
@@ -30,6 +30,26 @@ namespace LPD_Compiler.LexiconHandler
                             character = lpdfile.getCharacter();
                         }
                         character = lpdfile.getCharacter();
+                    }
+                    if(character == '/')
+                    {
+                        character = lpdfile.getCharacter();
+                        if(character == '*')
+                        {
+                            int starFlag = 0;
+                            while((character != '/' || starFlag != 1) && !lpdfile.isEndOfFile())
+                            {
+                                character = lpdfile.getCharacter();
+                                if (character == '*')
+                                {
+                                    starFlag = 1;
+                                    if(!lpdfile.isEndOfFile()) character = lpdfile.getCharacter();
+                                    if(character != '/') starFlag = 0;
+                                }                         
+                            }
+                            character = lpdfile.getCharacter();
+                        }
+                        //else ERROR
                     }
                     while (character == ' ' && !lpdfile.isEndOfFile())
                     {
@@ -45,7 +65,6 @@ namespace LPD_Compiler.LexiconHandler
                     }
                     catch (LexiconException ex)
                     {
-                        //Console.WriteLine(ex.Message);
                         MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         break;
                     }                  
