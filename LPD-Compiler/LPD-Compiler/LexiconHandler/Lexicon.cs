@@ -8,7 +8,7 @@ using LPD_Compiler.FileHandler;
 
 namespace LPD_Compiler.LexiconHandler
 {
-    class Lexicon
+    public class Lexicon
     {
         public List<Token> listTokens = new List<Token>();
         char character;
@@ -49,7 +49,11 @@ namespace LPD_Compiler.LexiconHandler
                             }
                             character = lpdfile.getCharacter();
                         }
-                        //else ERROR
+                        else
+                        {
+                            throw new LexiconException(lpdfile.currentLine + 1);
+                        }
+                            
                     }
                     while (character == ' ' && !lpdfile.isEndOfFile())
                     {
@@ -146,13 +150,21 @@ namespace LPD_Compiler.LexiconHandler
             Token token = new Token();
             string id;
             id = String.Copy(Char.ToString(character));
+            int line = lpdFile.currentLine;
 
             character = lpdFile.getCharacter();
 
             while (Char.IsLetter(character) || Char.IsNumber(character) || character == '_')
             {
-                id = id + character;
-                character = lpdFile.getCharacter();
+                if (line == lpdFile.currentLine)
+                {
+                    id = id + character;
+                    character = lpdFile.getCharacter();
+                }
+                else
+                {
+                    break;
+                }
             }
 
             token.lexema = id;
@@ -301,7 +313,8 @@ namespace LPD_Compiler.LexiconHandler
                     token.simbolo = "smaiorig";
                     break;
                 default:
-                    throw new LexiconException(lpdFile.currentLine + 1);            }
+                    throw new LexiconException(lpdFile.currentLine + 1);          
+            }
 
             return token;
         }
@@ -325,12 +338,6 @@ namespace LPD_Compiler.LexiconHandler
             character = lpdFile.getCharacter();
 
             return token;
-        }
-
-        // Test function
-        public void showListToken()
-        {
-
         }
     }
 }

@@ -34,8 +34,23 @@ namespace LPD_Compiler
 
         private void abrirToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-
             compiler.runCompiler();
+
+            if (compiler.lexicon.listTokens != null)
+            {
+                foreach (var i in compiler.lexicon.listTokens)
+                {
+                    int n = dataGridView1.Rows.Add();
+                    dataGridView1.Rows[n].Cells[0].Value = n;
+                    dataGridView1.Rows[n].Cells[1].Value = i.simbolo;
+                    dataGridView1.Rows[n].Cells[2].Value = i.lexema;
+                }
+            }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }
