@@ -38,8 +38,16 @@ namespace LPD_Compiler.LexiconHandler
                 }
                 if(lpdfile.i < length)
                 {
-                    token = getToken(lpdfile);
-                    listTokens.Add(token);
+                    try
+                    {
+                        token = getToken(lpdfile);
+                        listTokens.Add(token);
+                    }
+                    catch (LexiconException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        break;
+                    }                  
                 }
             }
         }
@@ -77,13 +85,13 @@ namespace LPD_Compiler.LexiconHandler
                             }
                             else
                             {
-                                if (character == ';' || character == '(' || character == ')' || character == '.')
+                                if (character == ';' || character == '(' || character == ')' || character == '.' || character == ',')
                                 {
                                     return trataPontuacao(lpdFile);
                                 }
                                 else
                                 {
-                                    //ERRO
+                                    throw new LexiconException(5); // PLACE HOLDER: trocar o parâmetro para o número da linha
                                 }
                             }
                         }
