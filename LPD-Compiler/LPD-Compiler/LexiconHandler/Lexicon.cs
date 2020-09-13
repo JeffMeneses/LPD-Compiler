@@ -19,24 +19,24 @@ namespace LPD_Compiler.LexiconHandler
             int length = lpdfile.content.Length;
             Token token;
 
-            while (lpdfile.i < length)
+            while (!lpdfile.isEndOfFile())
             {
-                while((character == '{' || character == ' ') && lpdfile.i < length)
+                while((character == '{' || character == ' ') && !lpdfile.isEndOfFile())
                 {
                     if(character == '{')
                     {
-                        while(character != '}' && lpdfile.i < length)
+                        while(character != '}' && !lpdfile.isEndOfFile())
                         {
                             character = lpdfile.getCharacter();
                         }
                         character = lpdfile.getCharacter();
                     }
-                    while (character == ' ' && lpdfile.i < length)
+                    while (character == ' ' && !lpdfile.isEndOfFile())
                     {
                         character = lpdfile.getCharacter();
                     }
                 }
-                if(lpdfile.i < length)
+                if(!lpdfile.isEndOfFile())
                 {
                     try
                     {
@@ -45,7 +45,8 @@ namespace LPD_Compiler.LexiconHandler
                     }
                     catch (LexiconException ex)
                     {
-                        Console.WriteLine(ex.Message);
+                        //Console.WriteLine(ex.Message);
+                        MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         break;
                     }                  
                 }
@@ -91,7 +92,7 @@ namespace LPD_Compiler.LexiconHandler
                                 }
                                 else
                                 {
-                                    throw new LexiconException(5); // PLACE HOLDER: trocar o parâmetro para o número da linha
+                                    throw new LexiconException(lpdFile.currentLine+1); 
                                 }
                             }
                         }
@@ -99,7 +100,6 @@ namespace LPD_Compiler.LexiconHandler
                 }
            }
 
-            return null;
         }
 
         // Trata X
@@ -217,8 +217,9 @@ namespace LPD_Compiler.LexiconHandler
 
             if (character == '=')
             {
-                atribuicao = String.Copy(Char.ToString(character));
+                atribuicao = atribuicao + character;
                 token.simbolo = "satribuicao";
+                character = lpdFile.getCharacter();
             }
             else
             {
@@ -281,9 +282,7 @@ namespace LPD_Compiler.LexiconHandler
                     token.simbolo = "smaiorig";
                     break;
                 default:
-                    token.simbolo = "ERRO"; // PLACEHOLDER: Throws error
-                    break;
-            }
+                    throw new LexiconException(lpdFile.currentLine + 1);            }
 
             return token;
         }
