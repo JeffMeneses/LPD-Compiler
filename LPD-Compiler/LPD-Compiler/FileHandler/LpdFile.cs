@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace LPD_Compiler.FileHandler
 {
-    class LpdFile
+    public class LpdFile
     {
         public string name;
         public string[] content;

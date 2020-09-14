@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LPD_Compiler.LexiconHandler
 {
-    class LexiconException : Exception
+    public class LexiconException : Exception
     {
         public LexiconException()
         {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LPD_Compiler.LexiconHandler
 {
-    class Token
+    public class Token
     {
         public String simbolo;
         public String lexema;
