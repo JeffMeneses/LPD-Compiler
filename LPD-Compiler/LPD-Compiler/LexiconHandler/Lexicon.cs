@@ -25,10 +25,13 @@ namespace LPD_Compiler.LexiconHandler
                 {
                     if(character == '{')
                     {
+                        int beginCommentLine = lpdfile.currentLine;
                         while(character != '}' && !lpdfile.isEndOfFile())
                         {
                             character = lpdfile.getCharacter();
                         }
+                        if(character != '}')
+                            throw new LexiconException(beginCommentLine + 1);
                         character = lpdfile.getCharacter();
                     }
                     if(character == '/')
@@ -36,7 +39,7 @@ namespace LPD_Compiler.LexiconHandler
                         character = lpdfile.getCharacter();
                         if(character == '*')
                         {
-                            int starFlag = 0;
+                            int starFlag = 0, beginCommentLine = lpdfile.currentLine;
                             while((character != '/' || starFlag != 1) && !lpdfile.isEndOfFile())
                             {
                                 character = lpdfile.getCharacter();
@@ -47,6 +50,8 @@ namespace LPD_Compiler.LexiconHandler
                                     if(character != '/') starFlag = 0;
                                 }                         
                             }
+                            if (character != '/')
+                                throw new LexiconException(beginCommentLine + 1);
                             character = lpdfile.getCharacter();
                         }
                         else
