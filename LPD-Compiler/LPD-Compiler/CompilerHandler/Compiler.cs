@@ -13,16 +13,15 @@ namespace LPD_Compiler.CompilerHandler
     public class Compiler
     {
         public Lexicon lexicon = new Lexicon();
-        public LpdFile lpdFile = new LpdFile();
 
-        public void runCompiler()
+        public void runCompiler(LpdFile ldpFile)
         {
-            lpdFile.openLpdFile();
-            lpdFile.readFile(lpdFile.name);
+            ldpFile.openLpdFile();
+            ldpFile.readFile(ldpFile.name);
 
             try
             {
-                lexicon.lexicalAnalyser(lpdFile);
+                lexicon.lexicalAnalyser(ldpFile);
             }
             catch (LexiconException ex)
             {

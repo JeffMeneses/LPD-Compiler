@@ -16,6 +16,9 @@ namespace LPD_Compiler
     public partial class Form1 : Form
     {
         Compiler compiler = new Compiler();
+        public List<LpdFile> listLpdFile = new List<LpdFile>();
+        bool primeiraVez = false;
+
 
         public Form1()
         {
@@ -34,7 +37,18 @@ namespace LPD_Compiler
 
         private void abrirToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            compiler.runCompiler();
+            LpdFile lpdFile = new LpdFile();
+            listLpdFile.Add(lpdFile);
+
+            if (primeiraVez == true)
+            {
+                dataGridView1.Rows.Clear();
+            }
+
+            primeiraVez = true;
+
+            compiler.runCompiler(lpdFile);
+
 
             if (compiler.lexicon.listTokens != null)
             {
@@ -46,6 +60,9 @@ namespace LPD_Compiler
                     dataGridView1.Rows[n].Cells[2].Value = i.lexema;
                 }
             }
+
+            listLpdFile.Remove(lpdFile);
+            compiler.lexicon.listTokens.Clear();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
