@@ -38,7 +38,7 @@ namespace LPD_Compiler.FileHandler
         public char getCharacter()
         {
             char character = ' ';
-            if (isIndexOutofBounds() == true)
+            while(!isEndOfFile() && isIndexOutofBounds() == true)
             {
                 i = 0;
                 currentLine++;

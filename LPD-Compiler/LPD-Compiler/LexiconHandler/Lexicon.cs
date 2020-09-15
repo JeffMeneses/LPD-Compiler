@@ -21,14 +21,17 @@ namespace LPD_Compiler.LexiconHandler
 
             while (!lpdfile.isEndOfFile())
             {
-                while((character == '{' || character == '/' || character == ' ') && !lpdfile.isEndOfFile())
+                while((character == '{' || character == '/' || character == ' ' || character == '\t') && !lpdfile.isEndOfFile())
                 {
                     if(character == '{')
                     {
+                        int beginCommentLine = lpdfile.currentLine;
                         while(character != '}' && !lpdfile.isEndOfFile())
                         {
                             character = lpdfile.getCharacter();
                         }
+                        if(character != '}')
+                            throw new LexiconException(beginCommentLine + 1);
                         character = lpdfile.getCharacter();
                     }
                     if(character == '/')
@@ -36,7 +39,7 @@ namespace LPD_Compiler.LexiconHandler
                         character = lpdfile.getCharacter();
                         if(character == '*')
                         {
-                            int starFlag = 0;
+                            int starFlag = 0, beginCommentLine = lpdfile.currentLine;
                             while((character != '/' || starFlag != 1) && !lpdfile.isEndOfFile())
                             {
                                 character = lpdfile.getCharacter();
@@ -47,15 +50,16 @@ namespace LPD_Compiler.LexiconHandler
                                     if(character != '/') starFlag = 0;
                                 }                         
                             }
+                            if (character != '/')
+                                throw new LexiconException(beginCommentLine + 1);
                             character = lpdfile.getCharacter();
                         }
                         else
                         {
                             throw new LexiconException(lpdfile.currentLine + 1);
-                        }
-                            
+                        }                       
                     }
-                    while (character == ' ' && !lpdfile.isEndOfFile())
+                    while ((character == ' ' || character == '\t') && !lpdfile.isEndOfFile())
                     {
                         character = lpdfile.getCharacter();
                     }
@@ -103,7 +107,7 @@ namespace LPD_Compiler.LexiconHandler
                         }
                         else
                         {
-                            if(character == '<' || character == '>' || character == '=')
+                            if(character == '<' || character == '>' || character == '=' || character == '!')
                             {
                                 return trataOperadorRelacional(lpdFile);
                             }
