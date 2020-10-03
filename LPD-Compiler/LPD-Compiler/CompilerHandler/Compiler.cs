@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using LPD_Compiler.LexiconHandler;
 using LPD_Compiler.FileHandler;
 using System.Runtime.InteropServices.WindowsRuntime;
+using LPD_Compiler.SyntacticHandler;
 
 namespace LPD_Compiler.CompilerHandler
 {
@@ -14,6 +15,7 @@ namespace LPD_Compiler.CompilerHandler
     {
         public Lexicon lexicon = new Lexicon();
         public LpdFile lpdFile = new LpdFile();
+        public Syntactic syntactic = new Syntactic();
 
         public void runCompiler()
         {
@@ -28,6 +30,7 @@ namespace LPD_Compiler.CompilerHandler
             {
                 MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            syntactic.syntacticAnalyser(lexicon);
         }
     }
 }

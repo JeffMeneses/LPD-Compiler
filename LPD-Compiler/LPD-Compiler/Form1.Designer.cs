@@ -40,9 +40,9 @@
             this.abrirToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.sairToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStrip4.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -128,11 +128,11 @@
             this.dataGridView1.TabIndex = 6;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
-            // Column3
+            // Column1
             // 
-            this.Column3.HeaderText = "Lexema";
-            this.Column3.Name = "Column3";
-            this.Column3.Width = 120;
+            this.Column1.HeaderText = "N";
+            this.Column1.Name = "Column1";
+            this.Column1.Width = 50;
             // 
             // Column2
             // 
@@ -140,11 +140,11 @@
             this.Column2.Name = "Column2";
             this.Column2.Width = 120;
             // 
-            // Column1
+            // Column3
             // 
-            this.Column1.HeaderText = "N";
-            this.Column1.Name = "Column1";
-            this.Column1.Width = 50;
+            this.Column3.HeaderText = "Lexema";
+            this.Column3.Name = "Column3";
+            this.Column3.Width = 120;
             // 
             // Form1
             // 
@@ -155,7 +155,7 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Compilador";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.contextMenuStrip4.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);

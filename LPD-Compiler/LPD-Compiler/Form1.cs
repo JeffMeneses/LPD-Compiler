@@ -15,7 +15,7 @@ namespace LPD_Compiler
 {
     public partial class Form1 : Form
     {
-        Compiler compiler = new Compiler();
+        Compiler compiler;
 
         public Form1()
         {
@@ -34,6 +34,10 @@ namespace LPD_Compiler
 
         private void abrirToolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            compiler = new Compiler();
+            dataGridView1.DataSource = null;
+            dataGridView1.Rows.Clear();
+
             compiler.runCompiler();
 
             if (compiler.lexicon.listTokens != null)
