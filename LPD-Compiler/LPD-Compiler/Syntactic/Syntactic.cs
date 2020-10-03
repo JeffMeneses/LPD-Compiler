@@ -24,7 +24,7 @@ namespace LPD_Compiler.SyntacticHandler
                     token = lexicon.readToken();
                     if (token.simbolo == "sponto_vírgula")
                     {
-                        Analisa_bloco(lexicon);
+                        analisaBloco(lexicon);
                         if (token.simbolo == "sponto")
                         {
                             // se acabou arquivo ou é comentário
@@ -51,15 +51,15 @@ namespace LPD_Compiler.SyntacticHandler
             }
         }
 
-        public void Analisa_bloco(Lexicon lexicon)
+        public void analisaBloco(Lexicon lexicon)
         {
             token = lexicon.readToken();
-            Analisa_et_variaveis(lexicon);
-            Analisa_subrotinas(lexicon);
-            Analisa_comandos(lexicon);
+            analisaEtVariaveis(lexicon);
+            analisaSubrotinas(lexicon);
+            analisaComandos(lexicon);
         }
 
-        public void Analisa_et_variaveis(Lexicon lexicon)
+        public void analisaEtVariaveis(Lexicon lexicon)
         {
             if (token.simbolo == "svar")
             {
@@ -68,7 +68,7 @@ namespace LPD_Compiler.SyntacticHandler
                 {
                     while(token.simbolo == "sidentificador")
                     {
-                        Analisa_variaveis(lexicon);
+                        analisaVariaveis(lexicon);
                         if(token.simbolo == "sponto_vírgula")
                         {
                             token = lexicon.readToken();
@@ -86,7 +86,7 @@ namespace LPD_Compiler.SyntacticHandler
             }
         }
 
-        public void Analisa_variaveis(Lexicon lexicon)
+        public void analisaVariaveis(Lexicon lexicon)
         {
             do
             {
@@ -115,10 +115,10 @@ namespace LPD_Compiler.SyntacticHandler
                 }
             } while (token.simbolo != "sdoispontos");
             token = lexicon.readToken();
-            Analisa_Tipo(lexicon);
+            analisaTipo(lexicon);
         }
 
-        public void Analisa_Tipo(Lexicon lexicon)
+        public void analisaTipo(Lexicon lexicon)
         {
             if(token.simbolo != "sinteiro" && token.simbolo != "sbooleano")
             {
@@ -127,12 +127,12 @@ namespace LPD_Compiler.SyntacticHandler
             token = lexicon.readToken();
         }
 
-        public void Analisa_comandos(Lexicon lexicon)
+        public void analisaComandos(Lexicon lexicon)
         {
             if(token.simbolo == "sinicio")
             {
                 token = lexicon.readToken();
-                Analisa_comando_simples(lexicon);
+                analisaComandoSimples(lexicon);
                 while(token.simbolo != "sfim")
                 {
                     if(token.simbolo == "sponto_vírgula")
@@ -140,7 +140,7 @@ namespace LPD_Compiler.SyntacticHandler
                         token = lexicon.readToken();
                         if(token.simbolo != "sfim")
                         {
-                            Analisa_comando_simples(lexicon);
+                            analisaComandoSimples(lexicon);
                         }
                     }
                     else
@@ -156,36 +156,36 @@ namespace LPD_Compiler.SyntacticHandler
             }
         }
 
-        public void Analisa_comando_simples(Lexicon lexicon)
+        public void analisaComandoSimples(Lexicon lexicon)
         {
             if (token.simbolo == "sidentificador")
-                Analisa_atrib_chprocedimento(lexicon);
+                AnalisaAtribChprocedimento(lexicon);
             else if (token.simbolo == "sse")
-                Analisa_se(lexicon);
+                analisaSe(lexicon);
             else if (token.simbolo == "senquanto")
-                Analisa_enquanto(lexicon);
+                analisaEnquanto(lexicon);
             else if (token.simbolo == "sleia")
-                Analisa_leia(lexicon);
+                analisaLeia(lexicon);
             else if (token.simbolo == "sescreva")
-                Analisa_escreva(lexicon);
+                analisaEscreva(lexicon);
             else
-                Analisa_comandos(lexicon);
+                analisaComandos(lexicon);
         }
 
-        public void Analisa_atrib_chprocedimento(Lexicon lexicon)
+        public void AnalisaAtribChprocedimento(Lexicon lexicon)
         {
             token = lexicon.readToken();
             if(token.simbolo == "satribuicao")
             {
-                Analisa_Atribuicao(lexicon);
+                analisaAtribuicao(lexicon);
             }
             else
             {
-                Analisa_chamada_procedimento(lexicon);
+                AnalisaChamadaProcedimento(lexicon);
             }
         }
 
-        public void Analisa_leia(Lexicon lexicon)
+        public void analisaLeia(Lexicon lexicon)
         {
             token = lexicon.readToken();
             if(token.simbolo == "sabre_parênteses")
@@ -214,18 +214,18 @@ namespace LPD_Compiler.SyntacticHandler
             }
         }
 
-        /*public void analisaEscreva()
+        public void analisaEscreva(Lexicon lexicon)
         {
-            //Lexico(token) - pega 1 token por vez
+            token = lexicon.readToken();
             if (token.simbolo == "sabre_parenteses")
             {
-                //Lexico(token)
+                token = lexicon.readToken();
                 if (token.simbolo == "sidentificador")
                 {
-                    //Lexico(token)
+                    token = lexicon.readToken();
                     if (token.simbolo == "sfecha_parenteses")
                     {
-                        //Lexico(token)
+                        token = lexicon.readToken();
                     }
                     else
                     {
@@ -243,14 +243,14 @@ namespace LPD_Compiler.SyntacticHandler
             }
         }
 
-        public void analisaEnquanto()
+        public void analisaEnquanto(Lexicon lexicon)
         {
-            //Lexico(token);
-            // analisaExpressao();
+            token = lexicon.readToken();
+            analisaExpressao(lexicon);
             if (token.simbolo == "sfaca")
             {
-                //Lexico(token)
-                //analisaComandoSimples();
+                token = lexicon.readToken();
+                analisaComandoSimples(lexicon);
             }
             else
             {
@@ -258,18 +258,18 @@ namespace LPD_Compiler.SyntacticHandler
             }
         }
 
-        public void analisaSe()
+        public void analisaSe(Lexicon lexicon)
         {
-            //Lexico(token);
-            //analisaExpressao();
+            token = lexicon.readToken();
+            analisaExpressao(lexicon);
             if (token.simbolo == "sentao")
             {
-                //Lexico(token);
-                //analisaComandoSimples();
+                token = lexicon.readToken();
+                analisaComandoSimples(lexicon);
                 if (token.simbolo == "ssenao")
                 {
-                    //Lexico(token);                 
-                    //analisaComandoSimples();
+                    token = lexicon.readToken();                 
+                    analisaComandoSimples(lexicon);
                 }
             }
             else
@@ -278,23 +278,22 @@ namespace LPD_Compiler.SyntacticHandler
             }
         }
 
-        public void analisaSubRotinas()
+        public void analisaSubrotinas(Lexicon lexicon)
         {
-
             while (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao")
             {
                 if (token.simbolo == "sprocedimento")
                 {
-                    //analisaDeclaracaoProcedimento();      
+                    analisaDeclaracaoProcedimento(lexicon);      
                 }
                 else
                 {
-                    //analisaDeclaracaoFuncao();
+                    analisaDeclaracaoFuncao(lexicon);
                 }
 
                 if (token.simbolo == "sponto_virgula")
                 {
-                    //Lexico(token);
+                    token = lexicon.readToken();
                 }
                 else
                 {
@@ -303,15 +302,15 @@ namespace LPD_Compiler.SyntacticHandler
             }
         }
 
-        public void analisaDeclaracaoProcedimento()
+        public void analisaDeclaracaoProcedimento(Lexicon lexicon)
         {
-            //Lexico(token);
+            token = lexicon.readToken();
             if (token.simbolo == "sidentificador")
             {
-                //Lexico(token);
+                token = lexicon.readToken();
                 if (token.simbolo == "sponto_virgula")
                 {
-                    //analisaBloco();
+                    analisaBloco(lexicon);
                 }
                 else
                 {
@@ -324,21 +323,21 @@ namespace LPD_Compiler.SyntacticHandler
             }
         }
 
-        public void analisaDeclaracaoFuncao()
+        public void analisaDeclaracaoFuncao(Lexicon lexicon)
         {
-            //Lexico(token);
+            token = lexicon.readToken();
             if (token.simbolo == "sidentificador")
             {
-                //Lexico(token);
+                token = lexicon.readToken();
                 if (token.simbolo == "sdoispontos")
                 {
-                    //Lexico(token);
+                    token = lexicon.readToken();
                     if (token.simbolo == "sinteiro" || token.simbolo == "sbooleano")
                     {
-                        //Lexico(token);
+                        token = lexicon.readToken();
                         if (token.simbolo == "sponto_virgula")
                         {
-                            //analisaBloco();
+                            analisaBloco(lexicon);
                         }
                         else
                         {
@@ -361,71 +360,71 @@ namespace LPD_Compiler.SyntacticHandler
             }
         }
 
-        public void analisaExpressao()
+        public void analisaExpressao(Lexicon lexicon)
         {
-            //analisaExpressaoSimples();
+            analisaExpressaoSimples(lexicon);
 
             if (token.simbolo == "smaior" || token.simbolo == "smaiorig" || token.simbolo == "sig" || token.simbolo == "smenor" || token.simbolo == "smenorig" || token.simbolo == "sdiff")
             {
-                //Lexico(token);
-                //analisaExpressaoSimples();
+                token = lexicon.readToken();
+                analisaExpressaoSimples(lexicon);
             }
         }
 
-        public void analaisaExpressaoSimples()
+        public void analisaExpressaoSimples(Lexicon lexicon)
         {
             if (token.simbolo == "smais" || token.simbolo == "smenos")
             {
-                //Lexico(token);
-                //analisaTermo();
+                token = lexicon.readToken();
+                analisaTermo(lexicon);
 
                 while (token.simbolo == "smais" || token.simbolo == "smenos" || token.simbolo == "sou")
                 {
-                    //Lexico(token);
-                    //analisaTermo();
+                    token = lexicon.readToken();
+                    analisaTermo(lexicon);
                 }
             }
         }
 
-        public void analisaTermo()
+        public void analisaTermo(Lexicon lexicon)
         {
-            //analisaFator();
+            analisaFator(lexicon);
 
             while (token.simbolo == "smult" || token.simbolo == "sdiv" || token.simbolo == "se")
             {
-                //Lexico(token);
-                //analisaFator();
+                token = lexicon.readToken();
+                analisaFator(lexicon);
             }
         }
 
-        public void analisaFator()
+        public void analisaFator(Lexicon lexicon)
         {
             if (token.simbolo == "sidentificador")
             {
-                //analisaChamadaFuncao
+                analisaChamadaFuncao(lexicon);
             }
             else
             {
                 if (token.simbolo == "snumero")
                 {
-                    //Lexico(token);
+                    token = lexicon.readToken();
                 }
                 else
                 {
                     if (token.simbolo == "snao")
                     {
-                        //Lexico(token);
-                        //analisaFator();
+                        token = lexicon.readToken();
+                        analisaFator(lexicon);
                     }
                     else
                     {
                         if (token.simbolo == "sabre_parenteses")
                         {
-                            //Lexico(token);
-                            //analisaExpressao(token);  
+                            token = lexicon.readToken();
+                            analisaExpressao(lexicon);  //analisaExpressao(token); 
                             if (token.simbolo == "sfecha_parenteses")
                             {
-                                //Lexico(token);
+                                token = lexicon.readToken();
                             }
                             else
                             {
@@ -436,7 +435,7 @@ namespace LPD_Compiler.SyntacticHandler
                         {
                             if (token.simbolo == "sverdadeiro" || token.simbolo == "sfalso")
                             {
-                                //Lexico(token);
+                                token = lexicon.readToken();
                             }
                             else
                             {
@@ -446,9 +445,9 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                 }
             }
-        }*/
+        }
 
 
-        // TODO: analisaAtribuicao, analisaChamadaProcedimento e analisaFuncao
+        // TODO: analisaAtribuicao, analisaChamadaProcedimento e analisaChamadaFuncao
     }
 }
