@@ -10,6 +10,7 @@ namespace LPD_Compiler.LexiconHandler
     {
         public String simbolo;
         public String lexema;
+        public int line;
 
         public Token()
         {

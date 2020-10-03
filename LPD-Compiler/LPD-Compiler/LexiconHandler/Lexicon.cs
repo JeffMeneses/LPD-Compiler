@@ -12,6 +12,7 @@ namespace LPD_Compiler.LexiconHandler
     {
         public List<Token> listTokens = new List<Token>();
         char character;
+        int i = 0;
 
         public void lexicalAnalyser(LpdFile lpdfile)
         {
@@ -31,7 +32,15 @@ namespace LPD_Compiler.LexiconHandler
                             character = lpdfile.getCharacter();
                         }
                         if(character != '}')
-                            throw new LexiconException(beginCommentLine + 1);
+                        //throw new LexiconException(beginCommentLine + 1);
+                        {
+                            Token tokenError = new Token();
+                            tokenError.simbolo = "serro";
+                            tokenError.line = beginCommentLine + 1;
+                            listTokens.Add(tokenError);
+                            return;
+
+                        }
                         character = lpdfile.getCharacter();
                     }
                     if(character == '/')
@@ -51,12 +60,25 @@ namespace LPD_Compiler.LexiconHandler
                                 }                         
                             }
                             if (character != '/')
-                                throw new LexiconException(beginCommentLine + 1);
+                            //throw new LexiconException(beginCommentLine + 1);
+                            {
+                                Token tokenError = new Token();
+                                tokenError.simbolo = "serro";
+                                tokenError.line = beginCommentLine + 1;
+                                listTokens.Add(tokenError);
+                                return;
+
+                            }
                             character = lpdfile.getCharacter();
                         }
                         else
                         {
-                            throw new LexiconException(lpdfile.currentLine + 1);
+                            //throw new LexiconException(lpdfile.currentLine + 1);
+                            Token tokenError = new Token();
+                            tokenError.simbolo = "serro";
+                            tokenError.line = lpdfile.currentLine + 1;
+                            listTokens.Add(tokenError);
+                            return;
                         }                       
                     }
                     while ((character == ' ' || character == '\t') && !lpdfile.isEndOfFile())
@@ -70,6 +92,7 @@ namespace LPD_Compiler.LexiconHandler
                     {
                         token = getToken(lpdfile);
                         listTokens.Add(token);
+                        if (token.simbolo == "serro") return;
                     }
                     catch (LexiconException ex)
                     {
@@ -119,7 +142,11 @@ namespace LPD_Compiler.LexiconHandler
                                 }
                                 else
                                 {
-                                    throw new LexiconException(lpdFile.currentLine+1); 
+                                    //throw new LexiconException(lpdFile.currentLine+1);
+                                    Token tokenError = new Token();
+                                    tokenError.simbolo = "serro";
+                                    tokenError.line = lpdFile.currentLine + 1;
+                                    return tokenError;
                                 }
                             }
                         }
@@ -317,7 +344,10 @@ namespace LPD_Compiler.LexiconHandler
                     token.simbolo = "smaiorig";
                     break;
                 default:
-                    throw new LexiconException(lpdFile.currentLine + 1);          
+                    //throw new LexiconException(lpdFile.currentLine + 1);
+                    token.simbolo = "serro";
+                    token.line = lpdFile.currentLine + 1;
+                    break;
             }
 
             return token;
@@ -342,6 +372,12 @@ namespace LPD_Compiler.LexiconHandler
             character = lpdFile.getCharacter();
 
             return token;
+        }
+
+        public Token readToken()
+        {
+            i++;
+            return listTokens[i - 1];
         }
     }
 }
