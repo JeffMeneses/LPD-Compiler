@@ -181,7 +181,7 @@ namespace LPD_Compiler.SyntacticHandler
             }
             else
             {
-                AnalisaChamadaProcedimento(lexicon);
+                analisaChamadaProcedimento(lexicon);
             }
         }
 
@@ -447,7 +447,20 @@ namespace LPD_Compiler.SyntacticHandler
             }
         }
 
+        public void analisaAtribuicao(Lexicon lexicon)
+        {
+            analisaExpressao(lexicon);
+        }
 
-        // TODO: analisaAtribuicao, analisaChamadaProcedimento e analisaChamadaFuncao
+        public void analisaChamadaProcedimento(Lexicon lexicon)
+        {
+                  
+        }
+
+        public void analisaChamadaFuncao(Lexicon lexicon)
+        {
+                     
+        }
+
     }
 }

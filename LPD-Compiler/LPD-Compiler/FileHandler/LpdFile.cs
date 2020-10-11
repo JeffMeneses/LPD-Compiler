@@ -16,7 +16,7 @@ namespace LPD_Compiler.FileHandler
         public int currentLine = 0;
         public int countLines = 0;
 
-        public void openLpdFile()
+        public string openLpdFile()
         {
             OpenFileDialog fd = new OpenFileDialog();
             fd.Filter = "Text File Only|*.txt";
@@ -27,6 +27,8 @@ namespace LPD_Compiler.FileHandler
                 fname = fd.FileName;
                 name = fname;
             }
+
+            return name;
         }
 
         public void readFile(string fname)
