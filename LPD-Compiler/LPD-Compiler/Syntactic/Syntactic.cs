@@ -454,12 +454,12 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaChamadaProcedimento(Lexicon lexicon)
         {
-                  
+            token = lexicon.readToken();
         }
 
         public void analisaChamadaFuncao(Lexicon lexicon)
         {
-                     
+            token = lexicon.readToken();
         }
 
     }
