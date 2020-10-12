@@ -207,6 +207,9 @@ namespace LPD_Compiler.LexiconHandler
                 case "se":
                     token.simbolo = "sse";
                     break;
+                case "entao":
+                    token.simbolo = "sentao";
+                    break;
                 case "senao":
                     token.simbolo = "ssenao";
                     break;
@@ -217,7 +220,7 @@ namespace LPD_Compiler.LexiconHandler
                     token.simbolo = "sfaca";
                     break;
                 case "inicio":
-                    token.simbolo = "sinício";
+                    token.simbolo = "sinicio";
                     break;
                 case "fim":
                     token.simbolo = "sfim";
@@ -358,13 +361,13 @@ namespace LPD_Compiler.LexiconHandler
             Token token = new Token();
 
             if (character == ';')
-                token.simbolo = "sponto_vírgula";
+                token.simbolo = "sponto_virgula";
             else if (character == ',')
-                token.simbolo = "svírgula";
+                token.simbolo = "svirgula";
             else if (character == '(')
-                token.simbolo = "sabre_parênteses";
+                token.simbolo = "sabre_parenteses";
             else if (character == ')')
-                token.simbolo = "sfecha_parênteses";
+                token.simbolo = "sfecha_parenteses";
             else if (character == '.')
                 token.simbolo = "sponto";
 
