@@ -22,11 +22,12 @@ namespace LPD_Compiler.SyntacticHandler
                 if (token.simbolo == "sidentificador")
                 {
                     token = lexicon.readToken();
-                    if (token.simbolo == "sponto_vírgula")
+                    if (token.simbolo == "sponto_virgula")
                     {
                         analisaBloco(lexicon);
                         if (token.simbolo == "sponto")
                         {
+                            Console.WriteLine("Deu certo");
                             // se acabou arquivo ou é comentário
                             // return Sucesso
                         }
@@ -69,7 +70,7 @@ namespace LPD_Compiler.SyntacticHandler
                     while(token.simbolo == "sidentificador")
                     {
                         analisaVariaveis(lexicon);
-                        if(token.simbolo == "sponto_vírgula")
+                        if(token.simbolo == "sponto_virgula")
                         {
                             token = lexicon.readToken();
                         }
@@ -93,9 +94,9 @@ namespace LPD_Compiler.SyntacticHandler
                 if (token.simbolo == "sidentificador")
                 {
                     token = lexicon.readToken();
-                    if (token.simbolo == "svírgula" || token.simbolo == "sdoispontos")
+                    if (token.simbolo == "svirgula" || token.simbolo == "sdoispontos")
                     {
-                        if (token.simbolo == "svírgula")
+                        if (token.simbolo == "svirgula")
                         {
                             token = lexicon.readToken();
                             if (token.simbolo == "sdoispontos")
@@ -135,7 +136,7 @@ namespace LPD_Compiler.SyntacticHandler
                 analisaComandoSimples(lexicon);
                 while(token.simbolo != "sfim")
                 {
-                    if(token.simbolo == "sponto_vírgula")
+                    if(token.simbolo == "sponto_virgula")
                     {
                         token = lexicon.readToken();
                         if(token.simbolo != "sfim")
@@ -188,13 +189,13 @@ namespace LPD_Compiler.SyntacticHandler
         public void analisaLeia(Lexicon lexicon)
         {
             token = lexicon.readToken();
-            if(token.simbolo == "sabre_parênteses")
+            if(token.simbolo == "sabre_parenteses")
             {
                 token = lexicon.readToken();
                 if(token.simbolo == "sidentificador")
                 {
                     token = lexicon.readToken();
-                    if (token.simbolo == "sfecha_parênteses")
+                    if (token.simbolo == "sfecha_parenteses")
                     {
                         token = lexicon.readToken();
                     }
@@ -339,10 +340,10 @@ namespace LPD_Compiler.SyntacticHandler
                         {
                             analisaBloco(lexicon);
                         }
-                        else
-                        {
+                        //else
+                        //{
                             //ERRO
-                        }
+                        //}
                     }
                     else
                     {
@@ -364,7 +365,7 @@ namespace LPD_Compiler.SyntacticHandler
         {
             analisaExpressaoSimples(lexicon);
 
-            if (token.simbolo == "smaior" || token.simbolo == "smaiorig" || token.simbolo == "sig" || token.simbolo == "smenor" || token.simbolo == "smenorig" || token.simbolo == "sdiff")
+            if (token.simbolo == "smaior" || token.simbolo == "smaiorig" || token.simbolo == "sig" || token.simbolo == "smenor" || token.simbolo == "smenorig" || token.simbolo == "sdif")
             {
                 token = lexicon.readToken();
                 analisaExpressaoSimples(lexicon);
@@ -374,15 +375,13 @@ namespace LPD_Compiler.SyntacticHandler
         public void analisaExpressaoSimples(Lexicon lexicon)
         {
             if (token.simbolo == "smais" || token.simbolo == "smenos")
+                token = lexicon.readToken();
+            analisaTermo(lexicon);
+
+            while (token.simbolo == "smais" || token.simbolo == "smenos" || token.simbolo == "sou")
             {
                 token = lexicon.readToken();
                 analisaTermo(lexicon);
-
-                while (token.simbolo == "smais" || token.simbolo == "smenos" || token.simbolo == "sou")
-                {
-                    token = lexicon.readToken();
-                    analisaTermo(lexicon);
-                }
             }
         }
 
@@ -449,12 +448,13 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaAtribuicao(Lexicon lexicon)
         {
+            token = lexicon.readToken();
             analisaExpressao(lexicon);
         }
 
         public void analisaChamadaProcedimento(Lexicon lexicon)
         {
-            token = lexicon.readToken();
+            //token = lexicon.readToken();
         }
 
         public void analisaChamadaFuncao(Lexicon lexicon)

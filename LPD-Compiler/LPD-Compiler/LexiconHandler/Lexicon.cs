@@ -207,6 +207,9 @@ namespace LPD_Compiler.LexiconHandler
                 case "se":
                     token.simbolo = "sse";
                     break;
+                case "entao":
+                    token.simbolo = "sentao";
+                    break;
                 case "senao":
                     token.simbolo = "ssenao";
                     break;
