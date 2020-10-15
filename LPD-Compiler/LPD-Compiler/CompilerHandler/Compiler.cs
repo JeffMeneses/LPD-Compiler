@@ -30,7 +30,19 @@ namespace LPD_Compiler.CompilerHandler
             {
                 MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            syntactic.syntacticAnalyser(lexicon);
+
+            try
+            {
+                syntactic.syntacticAnalyser(lexicon);
+            }
+            catch (LexiconException ex)
+            {
+                MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (SyntacticException ex)
+            {
+                MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

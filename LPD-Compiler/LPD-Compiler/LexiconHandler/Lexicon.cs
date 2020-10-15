@@ -172,6 +172,7 @@ namespace LPD_Compiler.LexiconHandler
             }
             token.simbolo = "snumero";
             token.lexema = num;
+            token.line = lpdFile.currentLine + 1;
 
             return token;
         }
@@ -199,6 +200,7 @@ namespace LPD_Compiler.LexiconHandler
             }
 
             token.lexema = id;
+            token.line = lpdFile.currentLine + 1;
             switch (id)
             {
                 case "programa":
@@ -291,6 +293,7 @@ namespace LPD_Compiler.LexiconHandler
                 token.simbolo = "sdoispontos";
             }
             token.lexema = atribuicao;
+            token.line = lpdFile.currentLine + 1;
 
             return token;
         }
@@ -307,6 +310,7 @@ namespace LPD_Compiler.LexiconHandler
                 token.simbolo = "smult";
 
             token.lexema = character.ToString();
+            token.line = lpdFile.currentLine + 1;
             character = lpdFile.getCharacter();
 
             return token;
@@ -326,7 +330,8 @@ namespace LPD_Compiler.LexiconHandler
             }
 
             token.lexema = operador;
-            switch(operador)
+            token.line = lpdFile.currentLine + 1;
+            switch (operador)
             {
                 case "<":
                     token.simbolo = "smenor";
@@ -372,6 +377,7 @@ namespace LPD_Compiler.LexiconHandler
                 token.simbolo = "sponto";
 
             token.lexema = character.ToString();
+            token.line = lpdFile.currentLine + 1;
             character = lpdFile.getCharacter();
 
             return token;
