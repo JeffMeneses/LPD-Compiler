@@ -39,17 +39,17 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else
                     {
-                        // ERRO
+                        throw new SyntacticException(token.line);
                     }
                 }
                 else
                 {
-                    // ERRO
+                    throw new SyntacticException(token.line);
                 }
             }
             else
             {
-                // ERRO
+                throw new SyntacticException(token.line);
             }
         }
 
@@ -77,13 +77,13 @@ namespace LPD_Compiler.SyntacticHandler
                         }
                         else
                         {
-                            // ERRO
+                            throw new SyntacticException(token.line);
                         }
                     }
                 }
                 else
                 {
-                    // ERRO
+                    throw new SyntacticException(token.line);
                 }
             }
         }
@@ -102,18 +102,18 @@ namespace LPD_Compiler.SyntacticHandler
                             token = lexicon.readToken();
                             if (!isErrorToken(token) && token.simbolo == "sdoispontos")
                             {
-                                // ERRO
+                                throw new SyntacticException(token.line);
                             }
                         }
                     }
                     else
                     {
-                        // ERRO
+                        throw new SyntacticException(token.line);
                     }
                 }
                 else
                 {
-                    // ERRO
+                    throw new SyntacticException(token.line);
                 }
             } while (token.simbolo != "sdoispontos");
             token = lexicon.readToken();
@@ -124,7 +124,7 @@ namespace LPD_Compiler.SyntacticHandler
         {
             if(!isErrorToken(token) && (token.simbolo != "sinteiro" && token.simbolo != "sbooleano"))
             {
-                // ERRO
+                throw new SyntacticException(token.line);
             }
             token = lexicon.readToken();
         }
@@ -147,14 +147,14 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else
                     {
-                        // ERRO
+                        throw new SyntacticException(token.line);
                     }
                 }
                 token = lexicon.readToken();
             }
             else
             {
-                // ERRO
+                throw new SyntacticException(token.line);
             }
         }
 
@@ -202,17 +202,17 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else
                     {
-                        // ERRO
+                        throw new SyntacticException(token.line);
                     }
                 }
                 else
                 {
-                    // ERRO
+                    throw new SyntacticException(token.line);
                 }
             }
             else
             {
-                // ERRO
+                throw new SyntacticException(token.line);
             }
         }
 
@@ -231,17 +231,17 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else
                     {
-                        //ERRO
+                        throw new SyntacticException(token.line);
                     }
                 }
                 else
                 {
-                    //ERRO
+                    throw new SyntacticException(token.line);
                 }
             }
             else
             {
-                //ERRO
+                throw new SyntacticException(token.line);
             }
         }
 
@@ -256,7 +256,7 @@ namespace LPD_Compiler.SyntacticHandler
             }
             else
             {
-                //ERRO
+                throw new SyntacticException(token.line);
             }
         }
 
@@ -276,7 +276,7 @@ namespace LPD_Compiler.SyntacticHandler
             }
             else
             {
-                //ERRO
+                throw new SyntacticException(token.line);
             }
         }
 
@@ -299,7 +299,7 @@ namespace LPD_Compiler.SyntacticHandler
                 }
                 else
                 {
-                    //ERRO
+                    throw new SyntacticException(token.line);
                 }
             }
         }
@@ -316,12 +316,12 @@ namespace LPD_Compiler.SyntacticHandler
                 }
                 else
                 {
-                    //ERRO
+                    throw new SyntacticException(token.line);
                 }
             }
             else
             {
-                //ERRO
+                throw new SyntacticException(token.line);
             }
         }
 
@@ -343,22 +343,22 @@ namespace LPD_Compiler.SyntacticHandler
                         }
                         //else
                         //{
-                            //ERRO
+                            throw new SyntacticException(token.line);
                         //}
                     }
                     else
                     {
-                        //ERRO
+                        throw new SyntacticException(token.line);
                     }
                 }
                 else
                 {
-                    //ERRO
+                    throw new SyntacticException(token.line);
                 }
             }
             else
             {
-                //ERRO
+                throw new SyntacticException(token.line);
             }
         }
 
@@ -428,7 +428,7 @@ namespace LPD_Compiler.SyntacticHandler
                             }
                             else
                             {
-                                //ERRO
+                                throw new SyntacticException(token.line);
                             }
                         }
                         else
@@ -439,7 +439,7 @@ namespace LPD_Compiler.SyntacticHandler
                             }
                             else
                             {
-                                //ERRO
+                                throw new SyntacticException(token.line);
                             }
                         }
                     }
