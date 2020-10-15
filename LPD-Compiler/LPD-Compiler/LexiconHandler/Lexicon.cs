@@ -12,7 +12,7 @@ namespace LPD_Compiler.LexiconHandler
     {
         public List<Token> listTokens = new List<Token>();
         char character;
-        int i = 0;
+        public int i = 0;
 
         public void lexicalAnalyser(LpdFile lpdfile)
         {
