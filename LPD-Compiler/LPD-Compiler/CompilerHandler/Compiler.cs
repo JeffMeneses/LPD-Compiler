@@ -37,11 +37,11 @@ namespace LPD_Compiler.CompilerHandler
             }
             catch (LexiconException ex)
             {
-                MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Erro Léxico", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (SyntacticException ex)
             {
-                MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Erro Sintático", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

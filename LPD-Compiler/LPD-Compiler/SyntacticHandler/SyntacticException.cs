@@ -13,10 +13,10 @@ namespace LPD_Compiler.SyntacticHandler
 
         }
 
-        public SyntacticException(int line)
-            : base(String.Format("Syntactic error found on line {0}", line))
+        public SyntacticException(int line, string message)
+            : base(String.Format("{1} na linha {0}.", line, message))
         {
-
+            
         }
 
     }
