@@ -62,7 +62,7 @@
             // abrirToolStripMenuItem1
             // 
             this.abrirToolStripMenuItem1.Name = "abrirToolStripMenuItem1";
-            this.abrirToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.abrirToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
             this.abrirToolStripMenuItem1.Text = "Abrir";
             this.abrirToolStripMenuItem1.Click += new System.EventHandler(this.abrirToolStripMenuItem1_Click);
             // 
@@ -121,14 +121,14 @@
             // salvarToolStripMenuItem
             // 
             this.salvarToolStripMenuItem.Name = "salvarToolStripMenuItem";
-            this.salvarToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.salvarToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.salvarToolStripMenuItem.Text = "Salvar";
             this.salvarToolStripMenuItem.Click += new System.EventHandler(this.sairToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
             this.toolStripMenuItem1.Text = "Compilar";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
@@ -167,11 +167,11 @@
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(380, 26);
+            this.label2.Location = new System.Drawing.Point(356, 26);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(225, 16);
+            this.label2.Size = new System.Drawing.Size(249, 16);
             this.label2.TabIndex = 9;
-            this.label2.Text = "                     Console                   ";
+            this.label2.Text = "                       Console                       ";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // dataGridView1
@@ -180,15 +180,15 @@
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column1,
             this.Column2});
-            this.dataGridView1.Location = new System.Drawing.Point(381, 45);
+            this.dataGridView1.Location = new System.Drawing.Point(356, 45);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(224, 150);
+            this.dataGridView1.Size = new System.Drawing.Size(249, 150);
             this.dataGridView1.TabIndex = 10;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
             // Column1
             // 
-            this.Column1.HeaderText = "N";
+            this.Column1.HeaderText = "Linha";
             this.Column1.Name = "Column1";
             this.Column1.Width = 50;
             // 
@@ -196,7 +196,7 @@
             // 
             this.Column2.HeaderText = "Erro";
             this.Column2.Name = "Column2";
-            this.Column2.Width = 130;
+            this.Column2.Width = 200;
             // 
             // Form1
             // 

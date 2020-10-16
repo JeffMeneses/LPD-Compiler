@@ -14,13 +14,12 @@ namespace LPD_Compiler.CompilerHandler
     public class Compiler
     {
         public Lexicon lexicon = new Lexicon();
-        public LpdFile lpdFile = new LpdFile();
         public Syntactic syntactic = new Syntactic();
+        int flag = 0;
 
-        public void runCompiler()
+        public void runCompiler(LpdFile lpdFile)
         {
-            lpdFile.openLpdFile();
-            lpdFile.readFile(lpdFile.name);
+            
 
             try
             {
@@ -29,6 +28,7 @@ namespace LPD_Compiler.CompilerHandler
             catch (LexiconException ex)
             {
                 MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                flag++;
             }
 
             try
@@ -38,11 +38,24 @@ namespace LPD_Compiler.CompilerHandler
             catch (LexiconException ex)
             {
                 MessageBox.Show(ex.Message, "Erro Léxico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                flag++;
             }
             catch (SyntacticException ex)
             {
                 MessageBox.Show(ex.Message, "Erro Sintático", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                flag++;
             }
+        }
+
+
+        public int returnError()
+        {
+            if (flag == 0)
+            {
+                MessageBox.Show("Código compilado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return 0;
+            }
+            return flag;
         }
     }
 }
