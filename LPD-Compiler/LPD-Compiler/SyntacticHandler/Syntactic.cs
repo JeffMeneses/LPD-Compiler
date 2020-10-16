@@ -13,8 +13,8 @@ namespace LPD_Compiler.SyntacticHandler
     public class Syntactic
     {
         public Token token;
-        public string message;
-        public int line;
+        public string message="";
+        public int line= 0;
 
         public void syntacticAnalyser(Lexicon lexicon)
         {
