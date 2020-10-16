@@ -19,6 +19,8 @@ namespace LPD_Compiler
     public partial class Form1 : Form
     {
         Compiler compiler;
+        public LpdFile lpdFile;
+
 
         public Form1()
         {
@@ -37,7 +39,9 @@ namespace LPD_Compiler
 
         private void abrirToolStripMenuItem1_Click(object sender, EventArgs e) //abrir - http://www.macoratti.net/15/05/c_rctbp1.htm
         {
-            int i = 0;
+            dataGridView1.Rows.Clear();
+            lpdFile = new LpdFile();
+            int i = 1;
             string s;
             //define as propriedades do controle 
             //OpenFileDialog
@@ -57,6 +61,7 @@ namespace LPD_Compiler
             {
                 try
                 {
+                    lpdFile.name = openFileDialog1.FileName;
                     FileStream fs = new FileStream(openFileDialog1.FileName, FileMode.Open, FileAccess.Read);
                     StreamReader m_streamReader = new StreamReader(fs);
                     // Lê o arquivo usando a classe StreamReader
@@ -66,11 +71,11 @@ namespace LPD_Compiler
                     string strLine = m_streamReader.ReadLine();
                     while (strLine != null)
                     {
-                        s = Convert.ToString(i); 
-                        if(i < 10)
-                            this.richTextBox1.Text += s + "     " + strLine + "\n";
-                        else
-                            this.richTextBox1.Text += s+"    "+ strLine + "\n";
+                        /*s = Convert.ToString(i); 
+                        if(i < 10)*/
+                        this.richTextBox1.Text += strLine + "\n";
+                        /* else
+                             this.richTextBox1.Text += s+"    "+ strLine + "\n";*/
                         strLine = m_streamReader.ReadLine();
                         i++;
                     }
@@ -114,16 +119,28 @@ namespace LPD_Compiler
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e) //Compilar
         {
-            compiler = new Compiler();
-            compiler.runCompiler();
-
-            /*TODO
-             * if(compiler.runCompiler == sem erro)
-             * MessageBox.Show(ex.Message, "Código compilado com sucesso!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-             * else
-             * adiciona linha no dataGridView1 com o N da linha e o que está errado Erro - Console
-             * mais grifar a linha N no Código que cotém o Erro
-             */
+            dataGridView1.Rows.Clear();
+            int index = 0;
+            if (lpdFile.name != null)
+            {
+                compiler = new Compiler();
+                lpdFile.readFile(lpdFile.name);
+                compiler.runCompiler(lpdFile);
+                if (compiler.returnError() != 0)
+                {
+                    int n = dataGridView1.Rows.Add();
+                    dataGridView1.Rows[n].Cells[0].Value = compiler.syntactic.line;
+                    dataGridView1.Rows[n].Cells[1].Value = compiler.syntactic.message;
+                    index = (compiler.syntactic.line -1);
+                    richTextBox1.Select(richTextBox1.GetFirstCharIndexFromLine(index), richTextBox1.Lines[index].Length);
+                    richTextBox1.SelectionColor = Color.Red;
+                    
+                }
+            }
+            else
+            {
+                MessageBox.Show("Você precisa abrir um arquivo primeiro!\n", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e) //Codigo
