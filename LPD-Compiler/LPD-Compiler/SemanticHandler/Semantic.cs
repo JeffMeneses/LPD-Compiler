@@ -12,63 +12,111 @@ namespace LPD_Compiler.SemanticHandler
 {
     public class Semantic
     {
-        public Stack<string> tabela = new Stack<string>();
-        public List<string> listaSimbolosTab = new List<string>();
+        public Stack<Item> tabelaDeSimbolos = new Stack<Item>();
 
-        public void insereTabela(string lexema, string simbolo)
+        public void insereTabela(string simbolo, string tipo, int nivel, int rotulo) //o ultimo parametro nao sei ainda direito
         {
-            tabela.Push(lexema);  //adiciona elemento no inicio da pilha
+            Item item = new Item();
 
-            colocaTipoTabela(lexema,simbolo);
+            item.simbolo = simbolo;
+            item.tipo = tipo;
+            item.nivel = nivel;
+            item.rotulo = rotulo;
+
+            tabelaDeSimbolos.Push(item);  
         }
 
         public void desempilhaTabela()
         {
-            tabela.Pop(); //retira o elemento mais recente colocado na pilha
+            tabelaDeSimbolos.Pop(); 
         }
 
-        public int pesquisaTabela(string lexema)
+        public void colocaTipoTabela(string simbolo, string tipo)  
         {
-            return 1; //retorna posicao do lexema na pilha caso exista
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if(item.simbolo == simbolo)
+                {
+                    item.tipo = tipo;
+                }
+            }
         }
 
-        public void pesquisaDuplicVarTabela(string lexema)
+        public int pesquisaDuplicVarTabela(string simbolo) //n sei se precisa ver o nivel aqui
         {
+            foreach (var item in tabelaDeSimbolos)
+            {
+               if(item.simbolo == simbolo && item.tipo == "varInteiro" || item.simbolo == simbolo && item.tipo == "varBooleano") //variavel
+               {
+                    return 1;
+               }
+               else if(item.simbolo == simbolo && item.tipo == "procedimento" || item.simbolo == simbolo && item.tipo == "funcInteiro" 
+                        || item.simbolo == simbolo && item.tipo == "funcBooleano") 
+               {
+                    return 2;
+               }
+               else if (item.simbolo == simbolo && item.tipo == "programa")
+               {
+                    return 3;
+               }
+            }
+            return 0;
 
         }
 
-        public void colocaTipoTabela(string lexema, string tipo)
+        public int pesquisaDeclVarTabela(string simbolo) 
         {
-            int posicao = pesquisaTabela(lexema);
-
-            listaSimbolosTab[posicao] = tipo; 
-            //a posicao em que o lexema foi colocado na pilha corresponde a posicao do seu simbolo/tipo na listaSimbolosTab
-           
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == simbolo && item.tipo == "varInteiro" || item.simbolo == simbolo && item.tipo == "varBooleano") 
+                {
+                   return 1;
+                }
+                               
+            }
+            return 0;
         }
 
-        public void pesquisaDeclVarTabela(string lexema) 
+        public int pesquisaDeclVarFuncTabela(string simbolo)
         {
-
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == simbolo && item.tipo == "varInteiro" || item.simbolo == simbolo && item.tipo == "varBooleano")
+                {
+                   return 1;
+                }
+                else if(item.simbolo == simbolo && item.tipo == "funcInteiro" || item.simbolo == simbolo && item.tipo == "funcBooleano")
+                {
+                     return 2;
+                }
+            }
+            return 0;
         }
 
-        public void pesquisaDeclFuncTabela(string lexema)
+        public int pesquisaDeclFuncTabela(string simbolo)
         {
-
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == simbolo && item.tipo == "funcInteiro" || item.simbolo == simbolo && item.tipo == "funcBooleano")
+                {
+                    return 1;
+                }
+            }
+            return 0;
         }
 
-        public void pesquisaDeclProcTabela(string lexema)
+        public int pesquisaDeclProcTabela(string simbolo)
         {
-
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == simbolo && item.tipo == "procedimento")
+                {
+                    return 1;
+                }
+            }
+            return 0;
         }
 
 
     }
 }
-
-/*
-   pilha.Peek(); //pega o elemento mais recente/topo sem retirá-lo
-
-   pilha.Clear(); //limpa todos os elementos da pilha
-
-   pilha.Count; 
- */
