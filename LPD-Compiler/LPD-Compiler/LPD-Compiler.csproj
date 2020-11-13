@@ -59,6 +59,8 @@
     <Compile Include="LexiconHandler\Token.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SemanticHandler\Item.cs" />
+    <Compile Include="SemanticHandler\Semantic.cs" />
     <Compile Include="SyntacticHandler\Syntactic.cs" />
     <Compile Include="SyntacticHandler\SyntacticException.cs" />
     <EmbeddedResource Include="Form1.resx">
