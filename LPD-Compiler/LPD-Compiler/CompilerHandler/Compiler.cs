@@ -8,6 +8,7 @@ using LPD_Compiler.LexiconHandler;
 using LPD_Compiler.FileHandler;
 using System.Runtime.InteropServices.WindowsRuntime;
 using LPD_Compiler.SyntacticHandler;
+using LPD_Compiler.SemanticHandler;
 
 namespace LPD_Compiler.CompilerHandler
 {
@@ -15,6 +16,7 @@ namespace LPD_Compiler.CompilerHandler
     {
         public Lexicon lexicon = new Lexicon();
         public Syntactic syntactic = new Syntactic();
+        public Semantic semantic = new Semantic();
         int flag = 0;
 
         public void runCompiler(LpdFile lpdFile)
@@ -33,7 +35,7 @@ namespace LPD_Compiler.CompilerHandler
 
             try
             {
-                syntactic.syntacticAnalyser(lexicon);
+                syntactic.syntacticAnalyser(lexicon, semantic);
             }
             catch (LexiconException ex)
             {
