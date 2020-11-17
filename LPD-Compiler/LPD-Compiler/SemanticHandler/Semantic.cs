@@ -31,14 +31,21 @@ namespace LPD_Compiler.SemanticHandler
             tabelaDeSimbolos.Pop(); 
         }
 
-        public void colocaTipoTabela(string simbolo, string tipo)  
+        public void colocaTipoTabela(string tipo, string ultimaVar)  
         {
+            int posicao = 0, aux =0;
+
             foreach (var item in tabelaDeSimbolos)
             {
-                if(item.simbolo == simbolo)
+                if(item.simbolo == ultimaVar)
                 {
-                    item.tipo = tipo;
+                    posicao = aux;
                 }
+                if(aux >= posicao)
+                {
+                    item.tipo = string.Concat(item.tipo, tipo);
+                }
+                aux++;
             }
         }
 
@@ -46,18 +53,9 @@ namespace LPD_Compiler.SemanticHandler
         {
             foreach (var item in tabelaDeSimbolos)
             {
-               if(item.simbolo == simbolo && item.tipo == "varInteiro" || item.simbolo == simbolo && item.tipo == "varBooleano") //variavel
+               if(item.simbolo == simbolo) //variavel
                {
                     return 1;
-               }
-               else if(item.simbolo == simbolo && item.tipo == "procedimento" || item.simbolo == simbolo && item.tipo == "funcInteiro" 
-                        || item.simbolo == simbolo && item.tipo == "funcBooleano") 
-               {
-                    return 2;
-               }
-               else if (item.simbolo == simbolo && item.tipo == "programa")
-               {
-                    return 3;
                }
             }
             return 0;
@@ -117,6 +115,21 @@ namespace LPD_Compiler.SemanticHandler
             return 0;
         }
 
+        public int pesquisaTabela(string simbolo)
+        {
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == simbolo)
+                {
+                    return 1;
+                }
+            }
+            return 0;
+        }
 
+        public Item retornaUltimoAdd()
+        {
+            return tabelaDeSimbolos.Peek();
+        }
     }
 }
