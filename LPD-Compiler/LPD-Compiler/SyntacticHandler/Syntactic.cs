@@ -228,16 +228,20 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void AnalisaAtribChprocedimento(Lexicon lexicon, Semantic semantic)
         {
-            if (semantic.pesquisaDeclProcTabela(token.lexema) != 0)
+            if (semantic.pesquisaProcTabela(token.lexema) != 0)
             {
                 analisaChamadaProcedimento(lexicon);
             }
             else
             {
-                updateToken(lexicon);
-                if (!isErrorToken(token) && token.simbolo == "satribuicao")
+                if (semantic.validaAtribuicao(token.lexema) == 1)
                 {
-                    analisaAtribuicao(lexicon, semantic);
+                    updateToken(lexicon);
+                    if (!isErrorToken(token) && token.simbolo == "satribuicao")
+                    {
+                        analisaAtribuicao(lexicon, semantic);
+                    }
+                    
                 }
                 else
                 {
@@ -254,7 +258,7 @@ namespace LPD_Compiler.SyntacticHandler
                 updateToken(lexicon);
                 if(!isErrorToken(token) && token.simbolo == "sidentificador")
                 {
-                    if (semantic.pesquisaDeclVarTabela(token.lexema) == 1) //se foi declarada
+                    if (semantic.pesquisaDeclVarTabela(token.lexema) == 1 && semantic.validaEscrevaELeia(token.lexema) != 0) //se foi declarada
                     {
                         updateToken(lexicon);
                         if (!isErrorToken(token) && token.simbolo == "sfecha_parenteses")
@@ -270,7 +274,7 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else
                     {
-                        MessageBox.Show("VARIAVEL NAO DECLARADA", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("FORMATO NAO ACEITO: LEIA", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
@@ -296,7 +300,7 @@ namespace LPD_Compiler.SyntacticHandler
                 updateToken(lexicon);
                 if (!isErrorToken(token) && token.simbolo == "sidentificador")
                 {
-                    if (semantic.pesquisaDeclVarFuncTabela(token.lexema) != 0)
+                    if (semantic.pesquisaDeclVarFuncTabela(token.lexema) != 0 && semantic.validaEscrevaELeia(token.lexema) != 0)
                     {
                         updateToken(lexicon);
                         if (!isErrorToken(token) && token.simbolo == "sfecha_parenteses")
