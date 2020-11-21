@@ -120,11 +120,46 @@ namespace LPD_Compiler.SemanticHandler
             return pesquisaTabela(simbolo);
         }
 
+        public int pesquisaProcTabela(string simbolo)
+        {
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == simbolo && item.tipo == "procedimento")
+                {
+                    return 1;
+                }
+            }
+            return 0;
+        }
         public int pesquisaTabela(string simbolo) //ok
         {
             foreach (var item in tabelaDeSimbolos)
             {
                 if (item.simbolo == simbolo)
+                {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+
+        public int validaEscrevaELeia(string simbolo)
+        {
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == simbolo && item.tipo == "varInteiro")
+                {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+
+        public int validaAtribuicao(string simbolo)
+        {
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == simbolo && item.tipo == "varInteiro")
                 {
                     return 1;
                 }
