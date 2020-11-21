@@ -14,7 +14,7 @@ namespace LPD_Compiler.SemanticHandler
     {
         public Stack<Item> tabelaDeSimbolos = new Stack<Item>();
 
-        public void insereTabela(string simbolo, string tipo, int nivel, int rotulo) //o ultimo parametro nao sei ainda direito
+        public void insereTabela(string simbolo, string tipo, int nivel, int rotulo) //o ultimo parametro nao sei ainda direito -ok
         {
             Item item = new Item();
 
@@ -26,43 +26,62 @@ namespace LPD_Compiler.SemanticHandler
             tabelaDeSimbolos.Push(item);  
         }
 
-        public void desempilhaTabela()
+        public void desempilhaTabela(string indicador)
         {
-            tabelaDeSimbolos.Pop(); 
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == indicador)
+                    break;
+                tabelaDeSimbolos.Pop();
+            }
         }
 
-        public void colocaTipoTabela(string tipo, string ultimaVar)  
+        public void colocaTipoTabela(string tipo, string ultimaVar)  //VERIFICAR
         {
-            int posicao = 0, aux =0;
 
             foreach (var item in tabelaDeSimbolos)
             {
                 if(item.simbolo == ultimaVar)
                 {
-                    posicao = aux;
-                }
-                if(aux >= posicao)
-                {
                     item.tipo = string.Concat(item.tipo, tipo);
-                }
-                aux++;
+                    break;
+                }               
+                item.tipo = string.Concat(item.tipo, tipo);
+               
             }
         }
 
-        public int pesquisaDuplicVarTabela(string simbolo) //n sei se precisa ver o nivel aqui
+        public int pesquisaDuplicVarTabela(string simbolo) //ok
         {
+            int flag = 0;
             foreach (var item in tabelaDeSimbolos)
             {
-               if(item.simbolo == simbolo) //variavel
-               {
-                    return 1;
-               }
+                if (item.simbolo == simbolo && item.tipo == "varInteiro" && flag == 0 ||
+                    item.simbolo == simbolo && item.tipo == "varBooleano" && flag == 0 ||
+                    item.simbolo == simbolo && item.tipo == "var" && flag == 0)
+                {
+                    if (item.simbolo == simbolo)
+                    {
+                        return 1;
+                    }
+                }
+                else
+                {
+                    if (item.tipo == "funcInteiro" || item.tipo == "funcBooleano" || item.tipo == "procedimento" || item.tipo == "nomedeprograma")
+                    {
+                        flag++; //mudou de nivel, significa que pode haver variaveis com mesmo nome
+                        if (item.simbolo == simbolo)
+                        {
+                            return 1;
+                        }
+                    }
+                }
             }
             return 0;
 
         }
 
-        public int pesquisaDeclVarTabela(string simbolo) 
+        public int pesquisaDeclVarTabela(string simbolo) //ok
         {
             foreach (var item in tabelaDeSimbolos)
             {
@@ -75,7 +94,7 @@ namespace LPD_Compiler.SemanticHandler
             return 0;
         }
 
-        public int pesquisaDeclVarFuncTabela(string simbolo)
+        public int pesquisaDeclVarFuncTabela(string simbolo) //ok
         {
             foreach (var item in tabelaDeSimbolos)
             {
@@ -91,31 +110,17 @@ namespace LPD_Compiler.SemanticHandler
             return 0;
         }
 
-        public int pesquisaDeclFuncTabela(string simbolo)
+        public int pesquisaDeclFuncTabela(string simbolo)//ok
         {
-            foreach (var item in tabelaDeSimbolos)
-            {
-                if (item.simbolo == simbolo && item.tipo == "funcInteiro" || item.simbolo == simbolo && item.tipo == "funcBooleano")
-                {
-                    return 1;
-                }
-            }
-            return 0;
+            return pesquisaTabela(simbolo);
         }
 
-        public int pesquisaDeclProcTabela(string simbolo)
+        public int pesquisaDeclProcTabela(string simbolo) //ok
         {
-            foreach (var item in tabelaDeSimbolos)
-            {
-                if (item.simbolo == simbolo && item.tipo == "procedimento")
-                {
-                    return 1;
-                }
-            }
-            return 0;
+            return pesquisaTabela(simbolo);
         }
 
-        public int pesquisaTabela(string simbolo)
+        public int pesquisaTabela(string simbolo) //ok
         {
             foreach (var item in tabelaDeSimbolos)
             {
@@ -127,7 +132,7 @@ namespace LPD_Compiler.SemanticHandler
             return 0;
         }
 
-        public Item retornaUltimoAdd()
+        public Item retornaUltimoAdd() //ok
         {
             return tabelaDeSimbolos.Peek();
         }
