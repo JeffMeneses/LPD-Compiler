@@ -107,13 +107,15 @@ namespace LPD_Compiler.SyntacticHandler
         public void analisaVariaveis(Lexicon lexicon, Semantic semantic)
         {
             flagVar = "";
+            int cont = 0;
             do
             {
                 if (!isErrorToken(token) && token.simbolo == "sidentificador")
                 {
                     if (semantic.pesquisaDuplicVarTabela(token.lexema) == 0) //n ha duplicidade
                     {
-                        flagVar = token.lexema;//
+                        if (cont == 0)//VERIFICAR
+                            flagVar = token.lexema;//
                         semantic.insereTabela(token.lexema, "var", 0, 0); //
                         updateToken(lexicon);
                         if (!isErrorToken(token) && (token.simbolo == "svirgula" || token.simbolo == "sdoispontos"))
@@ -138,7 +140,7 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else  //se ha duplicidade
                     {
-                        //ERRO SEMANTICO
+                        MessageBox.Show("DUPLICIDADE VARIAVEL", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
@@ -147,6 +149,7 @@ namespace LPD_Compiler.SyntacticHandler
                     message = "Identificador não encontrado";
                     throw new SyntacticException(token.line, "Identificador não encontrado");
                 }
+                cont++;//
             } while (token.simbolo != "sdoispontos");
             updateToken(lexicon);
             analisaTipo(lexicon, semantic);
@@ -225,14 +228,21 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void AnalisaAtribChprocedimento(Lexicon lexicon, Semantic semantic)
         {
-            updateToken(lexicon);
-            if(!isErrorToken(token) && token.simbolo == "satribuicao")
+            if (semantic.pesquisaDeclProcTabela(token.lexema) != 0)
             {
-                analisaAtribuicao(lexicon, semantic);
+                analisaChamadaProcedimento(lexicon);
             }
             else
             {
-                analisaChamadaProcedimento(lexicon);
+                updateToken(lexicon);
+                if (!isErrorToken(token) && token.simbolo == "satribuicao")
+                {
+                    analisaAtribuicao(lexicon, semantic);
+                }
+                else
+                {
+                    MessageBox.Show("PROCEDIMENTO NAO DECLARADO", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -260,7 +270,7 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else
                     {
-                        //ERRO SEMANTICO
+                        MessageBox.Show("VARIAVEL NAO DECLARADA", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
@@ -302,7 +312,7 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else
                     {
-                        //ERRO
+                        MessageBox.Show("FORMATO NAO ACEITO: ESCREVA", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
@@ -387,11 +397,13 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaDeclaracaoProcedimento(Lexicon lexicon, Semantic semantic)
         {
+            string aux = "";
             updateToken(lexicon);
             if (!isErrorToken(token) && token.simbolo == "sidentificador")
             {
                 if (semantic.pesquisaDeclProcTabela(token.lexema) == 0) //se nao achou, nao existe um proc com esse id
                 {
+                    aux = token.lexema;
                     semantic.insereTabela(token.lexema, "procedimento", 0, 0); //entao insere 
                     updateToken(lexicon);
                     if (!isErrorToken(token) && token.simbolo == "sponto_virgula")
@@ -407,7 +419,7 @@ namespace LPD_Compiler.SyntacticHandler
                 }
                 else
                 {
-                    //ERRO
+                    MessageBox.Show("PROCEDIMENTO JA DECLARADO COM ESSE NOME", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
@@ -416,16 +428,18 @@ namespace LPD_Compiler.SyntacticHandler
                 message = "Ponto e vírgula não encontrado";
                 throw new SyntacticException(token.line, "Ponto e vírgula não encontrado");
             }
-            semantic.desempilhaTabela(); //TODO desempilhar ate o id do proc 
+            semantic.desempilhaTabela(aux);  
         }
 
         public void analisaDeclaracaoFuncao(Lexicon lexicon, Semantic semantic)
         {
+            string aux = token.lexema;
             updateToken(lexicon);
             if (!isErrorToken(token) && token.simbolo == "sidentificador")
             {
                 if (semantic.pesquisaDeclFuncTabela(token.lexema) == 0) //senao achar, nao foi declarada ainda
                 {
+                    aux = token.lexema;
                     semantic.insereTabela(token.lexema, "func", 0, 0); //entao insere
                     updateToken(lexicon);
                     if (!isErrorToken(token) && token.simbolo == "sdoispontos")
@@ -470,7 +484,7 @@ namespace LPD_Compiler.SyntacticHandler
                 }
                 else
                 {
-                    //ERRO
+                    MessageBox.Show("FUNCAO JA DECLARADA COM ESSE NOME", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
@@ -479,7 +493,7 @@ namespace LPD_Compiler.SyntacticHandler
                 message = "Identificador não encontrado";
                 throw new SyntacticException(token.line, "Identificador não encontrado");
             }
-            semantic.desempilhaTabela();
+            semantic.desempilhaTabela(aux);
         }
 
         public void analisaExpressao(Lexicon lexicon, Semantic semantic)
@@ -535,7 +549,7 @@ namespace LPD_Compiler.SyntacticHandler
                 }
                 else
                 {
-                    //ERRO
+                    MessageBox.Show("ID NAO DECLARADO", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 
             }
