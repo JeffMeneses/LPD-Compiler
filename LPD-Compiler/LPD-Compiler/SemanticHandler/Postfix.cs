@@ -9,134 +9,202 @@ namespace LPD_Compiler.SemanticHandler
 {
     public class Postfix
     {
-        public List<Token> expression = new List<Token>();
-        public List<Token> convertedExpression = new List<Token>();
+        public List<String> expression = new List<String>();
+        public List<String> convertedExpression = new List<String>();
 
-        public Stack<Token> stackSymbols = new Stack<Token>();
+        public Stack<String> stackSymbols = new Stack<String>();
 
         public Postfix()
         {
 
         }
 
-        public Postfix(List<Token> expression)
+        public Postfix(List<String> expression)
         {
             this.expression = expression;
         }
 
         public void convertExpression()
         {
-
-            foreach(var token in expression.ToList())
+            string caracter;
+            for (var i = 0; i < expression.Count; i++)
             {
-                if(token.simbolo == "sidentificador")
+                caracter = expression[i];
+                if (expression[i] == "+" || expression[i] == "-")
                 {
-                    convertedExpression.Add(token);
-                    continue;
+                    if (i == 0 || (checkUnary(expression[i - 1])))
+                        caracter += "u";
                 }
 
-                if (stackSymbols.Count != 0)
-                    if (menorPrecedenciaAB(token, stackSymbols.Last()))
-                        desempilhaSimbolo(token);
-                    else
-                        empilhaSimbolo(token);
-                else
-                    if (menorPrecedenciaAB(token, null))
-                        desempilhaSimbolo(token);
-                    else
-                        empilhaSimbolo(token);
+                switch(caracter)
+                {
+                    case "+":
+                    case "-":
+                    case "nao":
+                    case "*":
+                    case "div":
+                    case "<":
+                    case "<=":
+                    case ">":
+                    case ">=":
+                    case "=":
+                    case "!=":
+                    case "e":
+                    case "ou":
+                    case "+u":
+                    case "-u":
+                        if (stackSymbols.Count != 0)
+                            if (menorPrecedenciaAB(caracter, stackSymbols.Peek()))
+                                desempilhaSimbolo(caracter);
+                            else
+                                empilhaSimbolo(caracter);
+                        else
+                            if (menorPrecedenciaAB(caracter, null))
+                                desempilhaSimbolo(caracter);
+                            else
+                                empilhaSimbolo(caracter);
+                        break;
+                    case "(":
+                        stackSymbols.Push(caracter);
+                        break;
+                    case ")":
+                        while(stackSymbols.Peek() != "(")
+                        {
+                            convertedExpression.Add(stackSymbols.Pop());
+                        }
+                        stackSymbols.Pop();
+                        break;
+                    default: convertedExpression.Add(caracter);
+                        break;
+                }
             }
             desempilhaTudo();
-            Console.WriteLine("Expressao: ", convertedExpression);
         }
 
         public void test()
         {
-            List<Token> test = new List<Token>();
+            List<String> test = new List<String>();
 
-            test.Add(new Token("sidentificador", "a"));
-            test.Add(new Token("smais", "+"));
-            test.Add(new Token("sidentificador", "b"));
-            test.Add(new Token("smaior", ">"));
-            test.Add(new Token("sidentificador", "3"));
-            test.Add(new Token("se", "and"));
-            test.Add(new Token("sidentificador", "c"));
-            test.Add(new Token("smaior", ">"));
-            test.Add(new Token("sidentificador", "d"));
+            test.Add("(");
+            test.Add("a");
+            test.Add("+");
+            test.Add("b");
+            test.Add(">");
+            test.Add("3");
+            test.Add(")");
+            test.Add("e");
+            test.Add("(");
+            test.Add("c");
+            test.Add(">");
+            test.Add("d");
+            test.Add(")");
+
+            /*test.Add("(");
+            test.Add("a");
+            test.Add("+");
+            test.Add("b");
+            test.Add("+");
+            test.Add("c");
+            test.Add(")");
+            test.Add("*");
+            test.Add("d");*/
+
+            /*test.Add("-");
+            test.Add("3");
+            test.Add("*");
+            test.Add("4");*/
 
             this.expression = test;
             convertExpression();
         }
 
-        public bool menorPrecedenciaAB(Token tokenA, Token tokenB)
+        public bool menorPrecedenciaAB(String caracterA, String caracterB)
         {
             int precedenciaA, precedenciaB;
 
-            precedenciaA = checkPrecedencia(tokenA);
-            precedenciaB = checkPrecedencia(tokenB);
+            precedenciaA = checkPrecedencia(caracterA);
+            precedenciaB = checkPrecedencia(caracterB);
 
             if (precedenciaB == -1)
-                return true;
+                return false;
             if (precedenciaA <= precedenciaB)
                 return true;
             return false;
         }
 
-        public int checkPrecedencia(Token token)
+        public int checkPrecedencia(String caracter)
         {
-            if (token == null) return -1;
-            switch (token.simbolo)
+            if (caracter == null) return -1;
+            switch (caracter)
             {
-                //case '-u':
-                //case '+u':
-                //case "snao": return 0;
+                case "-u":
+                case "+u":
+                case "snao": return 7;
 
-                case "smult":
-                case "sdiv": return 6;
+                case "*":
+                case "div": return 6;
 
-                case "smenos":
-                case "smais": return 5;
+                case "-":
+                case "+": return 5;
 
-                case "smenor":
-                case "smenorig":
-                case "smaiorig":
-                case "smaior": return 4;
+                case "<":
+                case "<=":
+                case ">=":
+                case ">": return 4;
 
-                case "sig":
-                case "sdif": return 3;
+                case "=":
+                case "!=": return 3;
 
-                case "se": return 2;
+                case "e": return 2;
 
-                case "sou": return 1;
+                case "ou": return 1;
             }
 
             return -1;
         }
 
-        public void desempilhaSimbolo(Token token)
+        public void desempilhaSimbolo(String caracter)
         {
-            Token aux;
             if(stackSymbols.Count != 0)
             {
-                aux = stackSymbols.Pop();
-                convertedExpression.Add(aux);
+                convertedExpression.Add(stackSymbols.Pop());
             }
 
-            stackSymbols.Push(token);
+            stackSymbols.Push(caracter);
         }
 
-        public void empilhaSimbolo(Token token)
+        public void empilhaSimbolo(String caracter)
         {
-            stackSymbols.Push(token);
+            stackSymbols.Push(caracter);
         }
 
         public void desempilhaTudo()
         {
-            Token token;
             while(stackSymbols.Count != 0)
             {
-                token = stackSymbols.Pop();
-                convertedExpression.Add(token);
+                convertedExpression.Add(stackSymbols.Pop());
+            }
+        }
+
+        public bool checkUnary(String caracter)
+        {
+            switch (caracter)
+            {
+                case "+":
+                case "-":
+                case "nao":
+                case "*":
+                case "div":
+                case "<":
+                case "<=":
+                case ">":
+                case ">=":
+                case "=":
+                case "!=":
+                case "e":
+                case "ou": return true;
+
+                default: return false;
             }
         }
     }
