@@ -115,7 +115,7 @@ namespace LPD_Compiler.SyntacticHandler
                 {
                     if (semantic.pesquisaDuplicVarTabela(token.lexema) == 0) //n ha duplicidade
                     {
-                        if (cont == 0)//VERIFICAR
+                        if (cont == 0)//
                             flagVar = token.lexema;//
                         semantic.insereTabela(token.lexema, "var", 0, 0); //
                         updateToken(lexicon);
@@ -141,7 +141,9 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else  //se ha duplicidade
                     {
-                        MessageBox.Show("DUPLICIDADE VARIAVEL", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        line = token.line;
+                        message = "Variavel com identificador duplicado";
+                        throw new SemanticException(token.line, "Variavel com identificador duplicado");
                     }
                 }
                 else
@@ -229,12 +231,14 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void AnalisaAtribChprocedimento(Lexicon lexicon, Semantic semantic)
         {
+            
             if (semantic.pesquisaProcTabela(token.lexema) != 0)
             {
                 analisaChamadaProcedimento(lexicon);
             }
             else
             {
+                 
                 if (semantic.validaAtribuicao(token.lexema) == 1)
                 {
                     updateToken(lexicon);
@@ -246,7 +250,9 @@ namespace LPD_Compiler.SyntacticHandler
                 }
                 else
                 {
-                    MessageBox.Show("PROCEDIMENTO NAO DECLARADO", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    line = token.line;
+                    message = "Formato da Atribuicao ou da chamada de Procedimento incorreto";
+                    throw new SemanticException(token.line, "Formato da Atribuicao ou da chamada de Procedimento incorreto");                                                                 
                 }
             }
         }
@@ -275,7 +281,9 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else
                     {
-                        MessageBox.Show("FORMATO NAO ACEITO: LEIA", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        line = token.line;
+                        message = "Formato Leia incorreto";
+                        throw new SemanticException(token.line, "Formato Leia incorreto");
                     }
                 }
                 else
@@ -317,7 +325,9 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else
                     {
-                        MessageBox.Show("FORMATO NAO ACEITO: ESCREVA", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        line = token.line;
+                        message = "Formato Escreva incorreto";
+                        throw new SemanticException(token.line, "Formato Escreva incorreto");
                     }
                 }
                 else
@@ -424,7 +434,9 @@ namespace LPD_Compiler.SyntacticHandler
                 }
                 else
                 {
-                    MessageBox.Show("PROCEDIMENTO JA DECLARADO COM ESSE NOME", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    line = token.line;
+                    message = "Estrutura com identificador duplicado";
+                    throw new SemanticException(token.line, "Estrutura com identificador duplicado");
                 }
             }
             else
@@ -489,7 +501,9 @@ namespace LPD_Compiler.SyntacticHandler
                 }
                 else
                 {
-                    MessageBox.Show("FUNCAO JA DECLARADA COM ESSE NOME", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    line = token.line;
+                    message = "Estrutura com identificador duplicado";
+                    throw new SemanticException(token.line, "Estrutura com identificador duplicado");
                 }
             }
             else
@@ -556,7 +570,9 @@ namespace LPD_Compiler.SyntacticHandler
                 }
                 else
                 {
-                    MessageBox.Show("ID NAO DECLARADO", "ERRO SEMANTICO", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    line = token.line;
+                    message = "Estrutura com identificador nao declarada";
+                    throw new SemanticException(token.line, "Estrutura com identificador nao declarada");
                 }
                 
             }
@@ -616,7 +632,7 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaChamadaProcedimento(Lexicon lexicon)
         {
-            //updateToken(lexicon);
+            updateToken(lexicon);
         }
 
         public void analisaChamadaFuncao(Lexicon lexicon)
