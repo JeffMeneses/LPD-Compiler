@@ -13,7 +13,9 @@ namespace LPD_Compiler.SyntacticHandler
 {
     public class Syntactic
     {
-        public Postfix postfix = new Postfix();
+        public Postfix postfix;
+        public List<string> expression = new List<string>();
+        public int parenthesisCount = 0;
         public Token token;
         public string message="", flagVar ="";
         public int line= 0;
@@ -503,25 +505,36 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaExpressao(Lexicon lexicon, Semantic semantic)
         {
+            if(parenthesisCount == 0)
+                expression.Clear();
             analisaExpressaoSimples(lexicon, semantic);
 
             if (!isErrorToken(token) && (token.simbolo == "smaior" || token.simbolo == "smaiorig" || token.simbolo == "sig" || token.simbolo == "smenor" || token.simbolo == "smenorig" || token.simbolo == "sdif"))
             {
+                expression.Add(token.lexema);
                 updateToken(lexicon);
                 analisaExpressaoSimples(lexicon, semantic);
             }
 
-            postfix.test();
+            if (parenthesisCount == 0)
+            {
+                postfix = new Postfix(expression);
+                postfix.convertExpression();
+            }
         }
 
         public void analisaExpressaoSimples(Lexicon lexicon, Semantic semantic)
         {
             if (!isErrorToken(token) && (token.simbolo == "smais" || token.simbolo == "smenos"))
+            {
+                expression.Add(token.lexema);
                 updateToken(lexicon);
+            }
             analisaTermo(lexicon, semantic);
 
             while (!isErrorToken(token) && (token.simbolo == "smais" || token.simbolo == "smenos" || token.simbolo == "sou"))
             {
+                expression.Add(token.lexema);
                 updateToken(lexicon);
                 analisaTermo(lexicon, semantic);
             }
@@ -533,6 +546,7 @@ namespace LPD_Compiler.SyntacticHandler
 
             while (token.simbolo == "smult" || token.simbolo == "sdiv" || token.simbolo == "se")
             {
+                expression.Add(token.lexema);
                 updateToken(lexicon);
                 analisaFator(lexicon, semantic);
             }
@@ -551,6 +565,7 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else
                     {
+                        expression.Add(token.lexema);
                         updateToken(lexicon);
                     }
                 }
@@ -564,12 +579,14 @@ namespace LPD_Compiler.SyntacticHandler
             {
                 if (token.simbolo == "snumero")
                 {
+                    expression.Add(token.lexema);
                     updateToken(lexicon);
                 }
                 else
                 {
                     if (token.simbolo == "snao")
                     {
+                        expression.Add(token.lexema);
                         updateToken(lexicon);
                         analisaFator(lexicon, semantic);
                     }
@@ -577,10 +594,14 @@ namespace LPD_Compiler.SyntacticHandler
                     {
                         if (token.simbolo == "sabre_parenteses")
                         {
+                            expression.Add(token.lexema);
+                            parenthesisCount++;
                             updateToken(lexicon);
                             analisaExpressao(lexicon, semantic);  //analisaExpressao(token); 
                             if (token.simbolo == "sfecha_parenteses")
                             {
+                                expression.Add(token.lexema);
+                                parenthesisCount--;
                                 updateToken(lexicon);
                             }
                             else
@@ -594,6 +615,7 @@ namespace LPD_Compiler.SyntacticHandler
                         {
                             if (token.simbolo == "sverdadeiro" || token.simbolo == "sfalso")
                             {
+                                expression.Add(token.lexema);
                                 updateToken(lexicon);
                             }
                             else
