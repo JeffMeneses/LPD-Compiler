@@ -202,6 +202,8 @@ namespace LPD_Compiler.SemanticHandler
                 case "=":
                 case "!=":
                 case "e":
+                case "(":
+                case ")":
                 case "ou": return true;
 
                 default: return false;
