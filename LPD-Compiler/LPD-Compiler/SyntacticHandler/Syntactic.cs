@@ -13,6 +13,7 @@ namespace LPD_Compiler.SyntacticHandler
 {
     public class Syntactic
     {
+        public Postfix postfix = new Postfix();
         public Token token;
         public string message="", flagVar ="";
         public int line= 0;
@@ -509,6 +510,8 @@ namespace LPD_Compiler.SyntacticHandler
                 updateToken(lexicon);
                 analisaExpressaoSimples(lexicon, semantic);
             }
+
+            postfix.test();
         }
 
         public void analisaExpressaoSimples(Lexicon lexicon, Semantic semantic)
