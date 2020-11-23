@@ -28,12 +28,16 @@ namespace LPD_Compiler.SemanticHandler
 
         public void desempilhaTabela(string indicador)
         {
+            int cont = 0;
             foreach (var item in tabelaDeSimbolos)
             {
                 if (item.simbolo == indicador)
                     break;
-                tabelaDeSimbolos.Pop();
+                cont++;
             }
+
+            for(int i = 0; i <cont; i++)
+                tabelaDeSimbolos.Pop();
         }
 
         public void colocaTipoTabela(string tipo, string ultimaVar)  //VERIFICAR

@@ -47,6 +47,11 @@ namespace LPD_Compiler.CompilerHandler
                 MessageBox.Show(ex.Message, "Erro Sintático", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 flag++;
             }
+            catch (SemanticException ex)
+            {
+                MessageBox.Show(ex.Message, "Erro Semantico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                flag++;
+            }
         }
 
 
