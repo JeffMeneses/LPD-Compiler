@@ -14,7 +14,7 @@ namespace LPD_Compiler.SemanticHandler
     {
         public Stack<Item> tabelaDeSimbolos = new Stack<Item>();
 
-        public void insereTabela(string simbolo, string tipo, int nivel, int rotulo) //o ultimo parametro nao sei ainda direito -ok
+        public void insereTabela(string simbolo, string tipo, int nivel, int rotulo)
         {
             Item item = new Item();
 
@@ -23,7 +23,7 @@ namespace LPD_Compiler.SemanticHandler
             item.nivel = nivel;
             item.rotulo = rotulo;
 
-            tabelaDeSimbolos.Push(item);  
+            tabelaDeSimbolos.Push(item);
         }
 
         public void desempilhaTabela(string indicador)
@@ -36,26 +36,26 @@ namespace LPD_Compiler.SemanticHandler
                 cont++;
             }
 
-            for(int i = 0; i <cont; i++)
+            for (int i = 0; i < cont; i++)
                 tabelaDeSimbolos.Pop();
         }
 
-        public void colocaTipoTabela(string tipo, string ultimaVar)  //VERIFICAR
+        public void colocaTipoTabela(string tipo, string ultimaVar)
         {
 
             foreach (var item in tabelaDeSimbolos)
             {
-                if(item.simbolo == ultimaVar)
+                if (item.simbolo == ultimaVar)
                 {
                     item.tipo = string.Concat(item.tipo, tipo);
                     break;
-                }               
+                }
                 item.tipo = string.Concat(item.tipo, tipo);
-               
+
             }
         }
 
-        public int pesquisaDuplicVarTabela(string simbolo) //ok
+        public int pesquisaDuplicVarTabela(string simbolo)
         {
             int flag = 0;
             foreach (var item in tabelaDeSimbolos)
@@ -85,41 +85,41 @@ namespace LPD_Compiler.SemanticHandler
 
         }
 
-        public int pesquisaDeclVarTabela(string simbolo) //ok
-        {
-            foreach (var item in tabelaDeSimbolos)
-            {
-                if (item.simbolo == simbolo && item.tipo == "varInteiro" || item.simbolo == simbolo && item.tipo == "varBooleano") 
-                {
-                   return 1;
-                }
-                               
-            }
-            return 0;
-        }
-
-        public int pesquisaDeclVarFuncTabela(string simbolo) //ok
+        public int pesquisaDeclVarTabela(string simbolo)
         {
             foreach (var item in tabelaDeSimbolos)
             {
                 if (item.simbolo == simbolo && item.tipo == "varInteiro" || item.simbolo == simbolo && item.tipo == "varBooleano")
                 {
-                   return 1;
+                    return 1;
                 }
-                else if(item.simbolo == simbolo && item.tipo == "funcInteiro" || item.simbolo == simbolo && item.tipo == "funcBooleano")
+
+            }
+            return 0;
+        }
+
+        public int pesquisaDeclVarFuncTabela(string simbolo)
+        {
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == simbolo && item.tipo == "varInteiro" || item.simbolo == simbolo && item.tipo == "varBooleano")
                 {
-                     return 2;
+                    return 1;
+                }
+                else if (item.simbolo == simbolo && item.tipo == "funcInteiro" || item.simbolo == simbolo && item.tipo == "funcBooleano")
+                {
+                    return 2;
                 }
             }
             return 0;
         }
 
-        public int pesquisaDeclFuncTabela(string simbolo)//ok
+        public int pesquisaDeclFuncTabela(string simbolo)
         {
             return pesquisaTabela(simbolo);
         }
 
-        public int pesquisaDeclProcTabela(string simbolo) //ok
+        public int pesquisaDeclProcTabela(string simbolo)
         {
             return pesquisaTabela(simbolo);
         }
@@ -135,7 +135,7 @@ namespace LPD_Compiler.SemanticHandler
             }
             return 0;
         }
-        public int pesquisaTabela(string simbolo) //ok
+        public int pesquisaTabela(string simbolo)
         {
             foreach (var item in tabelaDeSimbolos)
             {
@@ -167,11 +167,140 @@ namespace LPD_Compiler.SemanticHandler
                 {
                     return 1;
                 }
+                else if (item.simbolo == simbolo && item.tipo == "varBooleano")
+                {
+                    return 0;
+                }
+            }
+            return -1;
+        }
+
+        public int retornaTipo(string simbolo)
+        {
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == simbolo && item.tipo == "varInteiro")
+                {
+                    return 1;
+                }
+                else if (item.simbolo == simbolo && item.tipo == "varBooleano")
+                {
+                    return 2;
+                }
             }
             return 0;
         }
 
-        public Item retornaUltimoAdd() //ok
+        public int validaCompatibilidadeTipo(List<string> expressao)
+        {
+            int posicao = 0;
+            List<string> exAux = new List<string>();
+
+
+            foreach (string termo in expressao)
+            {
+                exAux.Add(expressao[posicao]);
+                posicao++;
+            }
+
+            posicao = 0;
+
+            foreach (string termo in expressao)
+            {
+                if (expressao.Count != 1)
+                {
+                    if (termo == "+" || termo == "-" || termo == "*" || termo == "div")
+                    {
+                        if (int.TryParse(exAux[posicao - 2], out _) || retornaTipo(exAux[posicao - 2]) == 1)
+                        {
+                            if (int.TryParse(exAux[posicao - 1], out _) || retornaTipo(exAux[posicao - 1]) == 1)
+                            {
+                                if ((posicao + 1) == expressao.Count)
+                                    return 1; // inteiro
+                                exAux[posicao] = "1";
+                            }
+                        }
+
+                    }
+                    else if (termo == ">" || termo == "<" || termo == ">=" || termo == "<=")
+                    {
+
+                        if (int.TryParse(exAux[posicao - 2], out _) || retornaTipo(exAux[posicao - 2]) == 1)
+                        {
+                            if (int.TryParse(exAux[posicao - 1], out _) || retornaTipo(exAux[posicao - 1]) == 1)
+                            {
+                                if ((posicao + 1) == exAux.Count)
+                                    return 0; // booleano
+                                exAux[posicao] = "bool";
+                            }
+                        }
+
+                    }
+                    else if (termo == "=" || termo == "!=")
+                    {
+                        if (retornaTipo(exAux[posicao - 2]) == 2 || exAux[posicao - 2] == "bool")
+                        {
+                            if (retornaTipo(exAux[posicao - 1]) == 2 || exAux[posicao - 1] == "bool")
+                            {
+                                if ((posicao + 1) == expressao.Count)
+                                    return 0; // booleano
+                                exAux[posicao] = "bool";
+                            }
+                        }
+
+                    }
+                    else if (termo == "-u" || termo == "+u")
+                    {
+                        if (int.TryParse(exAux[posicao - 1], out _) || retornaTipo(exAux[posicao - 1]) == 1)
+                        {
+                            if ((posicao + 1) == expressao.Count)
+                                return 1; // inteiro
+                            exAux[posicao] = "1";
+                        }
+
+                    }
+                    else if (termo == "nao")
+                    {
+                        if (retornaTipo(exAux[posicao - 1]) == 2 || exAux[posicao - 1] == "bool")
+                        {
+                            if ((posicao + 1) == expressao.Count)
+                                return 0; // booleano
+                            exAux[posicao] = "bool";
+                        }
+
+                    }
+                    else if (termo == "e" || termo == "ou")
+                    {
+                        if (retornaTipo(exAux[posicao - 2]) == 2 || exAux[posicao - 2] == "bool")
+                        {
+                            if (retornaTipo(exAux[posicao - 1]) == 2 || exAux[posicao - 1] == "bool")
+                            {
+                                if ((posicao + 1) == expressao.Count)
+                                    return 0; // booleano
+                                exAux[posicao] = "bool";
+                            }
+                        }
+
+                    }
+                }
+                else
+                {
+                    if (retornaTipo(exAux[posicao]) == 2 || exAux[posicao] == "falso" || exAux[posicao] == "verdadeiro")
+                    {
+                        return 0;
+                    }
+                    else if (int.TryParse(exAux[posicao], out _) || retornaTipo(exAux[posicao]) == 1)
+                    {
+                        return 1;
+                    }
+                }
+                posicao++;
+            }
+
+            return -1; //erro
+        }
+
+        public Item retornaUltimoAdd()
         {
             return tabelaDeSimbolos.Peek();
         }
