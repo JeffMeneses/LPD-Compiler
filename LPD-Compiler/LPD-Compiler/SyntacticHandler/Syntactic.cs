@@ -17,18 +17,18 @@ namespace LPD_Compiler.SyntacticHandler
         public List<string> expression = new List<string>();
         public int parenthesisCount = 0;
         public Token token;
-        public string message="", flagVar ="";
-        public int line= 0;
+        public string message = "", flagVar = "";
+        public int line = 0;
 
         public void syntacticAnalyser(Lexicon lexicon, Semantic semantic)
         {
             updateToken(lexicon);
-            if(!isErrorToken(token) && token.simbolo == "sprograma")
+            if (!isErrorToken(token) && token.simbolo == "sprograma")
             {
                 updateToken(lexicon);
                 if (!isErrorToken(token) && token.simbolo == "sidentificador")
                 {
-                    semantic.insereTabela(token.lexema, "nomedeprograma", 0,0); //ver os 2 ultimos parametros
+                    semantic.insereTabela(token.lexema, "nomedeprograma", 0, 0); //ver os 2 ultimos parametros
                     updateToken(lexicon);
                     if (!isErrorToken(token) && token.simbolo == "sponto_virgula")
                     {
@@ -43,7 +43,7 @@ namespace LPD_Compiler.SyntacticHandler
                         {
                             line = token.line;
                             message = "Ponto final não encontrado";
-                            throw new SyntacticException(token.line, "Ponto final não encontrado");                            
+                            throw new SyntacticException(token.line, "Ponto final não encontrado");
                         }
                     }
                     else
@@ -81,12 +81,12 @@ namespace LPD_Compiler.SyntacticHandler
             if (!isErrorToken(token) && token.simbolo == "svar")
             {
                 updateToken(lexicon);
-                if(!isErrorToken(token) && token.simbolo == "sidentificador")
+                if (!isErrorToken(token) && token.simbolo == "sidentificador")
                 {
-                    while(!isErrorToken(token) && token.simbolo == "sidentificador")
+                    while (!isErrorToken(token) && token.simbolo == "sidentificador")
                     {
                         analisaVariaveis(lexicon, semantic);
-                        if(!isErrorToken(token) && token.simbolo == "sponto_virgula")
+                        if (!isErrorToken(token) && token.simbolo == "sponto_virgula")
                         {
                             updateToken(lexicon);
                         }
@@ -162,7 +162,7 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaTipo(Lexicon lexicon, Semantic semantic)
         {
-            if(!isErrorToken(token) && (token.simbolo != "sinteiro" && token.simbolo != "sbooleano"))
+            if (!isErrorToken(token) && (token.simbolo != "sinteiro" && token.simbolo != "sbooleano"))
             {
                 line = token.line;
                 message = "Tipo inteiro ou booleano não encontrado";
@@ -184,16 +184,16 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaComandos(Lexicon lexicon, Semantic semantic)
         {
-            if(!isErrorToken(token) && token.simbolo == "sinicio")
+            if (!isErrorToken(token) && token.simbolo == "sinicio")
             {
                 updateToken(lexicon);
                 analisaComandoSimples(lexicon, semantic);
-                while(token.simbolo != "sfim")
+                while (token.simbolo != "sfim")
                 {
-                    if(!isErrorToken(token) && token.simbolo == "sponto_virgula")
+                    if (!isErrorToken(token) && token.simbolo == "sponto_virgula")
                     {
                         updateToken(lexicon);
-                        if(!isErrorToken(token) && token.simbolo != "sfim")
+                        if (!isErrorToken(token) && token.simbolo != "sfim")
                         {
                             analisaComandoSimples(lexicon, semantic);
                         }
@@ -233,28 +233,34 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void AnalisaAtribChprocedimento(Lexicon lexicon, Semantic semantic)
         {
-            
+
             if (semantic.pesquisaProcTabela(token.lexema) != 0)
             {
                 analisaChamadaProcedimento(lexicon);
             }
             else
             {
-                 
-                if (semantic.validaAtribuicao(token.lexema) == 1)
+                int ret = semantic.validaAtribuicao(token.lexema);
+                if (ret != -1)
                 {
                     updateToken(lexicon);
                     if (!isErrorToken(token) && token.simbolo == "satribuicao")
                     {
                         analisaAtribuicao(lexicon, semantic);
+                        if (semantic.validaCompatibilidadeTipo(postfix.convertedExpression) != ret)
+                        {
+                            line = token.line;
+                            message = "Tipos nao compativeis";
+                            throw new SemanticException(token.line, "Tipos nao compativeis");
+                        }
                     }
-                    
+
                 }
                 else
                 {
                     line = token.line;
                     message = "Formato da Atribuicao ou da chamada de Procedimento incorreto";
-                    throw new SemanticException(token.line, "Formato da Atribuicao ou da chamada de Procedimento incorreto");                                                                 
+                    throw new SemanticException(token.line, "Formato da Atribuicao ou da chamada de Procedimento incorreto");
                 }
             }
         }
@@ -262,10 +268,10 @@ namespace LPD_Compiler.SyntacticHandler
         public void analisaLeia(Lexicon lexicon, Semantic semantic)
         {
             updateToken(lexicon);
-            if(!isErrorToken(token) && token.simbolo == "sabre_parenteses")
+            if (!isErrorToken(token) && token.simbolo == "sabre_parenteses")
             {
                 updateToken(lexicon);
-                if(!isErrorToken(token) && token.simbolo == "sidentificador")
+                if (!isErrorToken(token) && token.simbolo == "sidentificador")
                 {
                     if (semantic.pesquisaDeclVarTabela(token.lexema) == 1 && semantic.validaEscrevaELeia(token.lexema) != 0) //se foi declarada
                     {
@@ -351,16 +357,25 @@ namespace LPD_Compiler.SyntacticHandler
         {
             updateToken(lexicon);
             analisaExpressao(lexicon, semantic);
-            if (!isErrorToken(token) && token.simbolo == "sfaca")
+            if (semantic.validaCompatibilidadeTipo(postfix.convertedExpression) == 0)
             {
-                updateToken(lexicon);
-                analisaComandoSimples(lexicon, semantic);
+                if (!isErrorToken(token) && token.simbolo == "sfaca")
+                {
+                    updateToken(lexicon);
+                    analisaComandoSimples(lexicon, semantic);
+                }
+                else
+                {
+                    line = token.line;
+                    message = "Faça não encontrado";
+                    throw new SyntacticException(token.line, "Faça não encontrado");
+                }
             }
             else
             {
                 line = token.line;
-                message = "Faça não encontrado";
-                throw new SyntacticException(token.line, "Faça não encontrado");
+                message = "Expressao do 'enquanto' nao booleana";
+                throw new SemanticException(token.line, "Expressao do 'enquanto' nao booleana");
             }
         }
 
@@ -368,21 +383,30 @@ namespace LPD_Compiler.SyntacticHandler
         {
             updateToken(lexicon);
             analisaExpressao(lexicon, semantic);
-            if (!isErrorToken(token) && token.simbolo == "sentao")
+            if (semantic.validaCompatibilidadeTipo(postfix.convertedExpression) == 0)
             {
-                updateToken(lexicon);
-                analisaComandoSimples(lexicon, semantic);
-                if (!isErrorToken(token) && token.simbolo == "ssenao")
+                if (!isErrorToken(token) && token.simbolo == "sentao")
                 {
-                    updateToken(lexicon);                 
+                    updateToken(lexicon);
                     analisaComandoSimples(lexicon, semantic);
+                    if (!isErrorToken(token) && token.simbolo == "ssenao")
+                    {
+                        updateToken(lexicon);
+                        analisaComandoSimples(lexicon, semantic);
+                    }
+                }
+                else
+                {
+                    line = token.line;
+                    message = "Então não encontrado";
+                    throw new SyntacticException(token.line, "Então não encontrado");
                 }
             }
             else
             {
                 line = token.line;
-                message = "Então não encontrado";
-                throw new SyntacticException(token.line, "Então não encontrado");
+                message = "Expressao do 'se' nao booleana";
+                throw new SemanticException(token.line, "Expressao do 'se' nao booleana");
             }
         }
 
@@ -392,7 +416,7 @@ namespace LPD_Compiler.SyntacticHandler
             {
                 if (!isErrorToken(token) && token.simbolo == "sprocedimento")
                 {
-                    analisaDeclaracaoProcedimento(lexicon, semantic);      
+                    analisaDeclaracaoProcedimento(lexicon, semantic);
                 }
                 else
                 {
@@ -447,7 +471,7 @@ namespace LPD_Compiler.SyntacticHandler
                 message = "Ponto e vírgula não encontrado";
                 throw new SyntacticException(token.line, "Ponto e vírgula não encontrado");
             }
-            semantic.desempilhaTabela(aux);  
+            semantic.desempilhaTabela(aux);
         }
 
         public void analisaDeclaracaoFuncao(Lexicon lexicon, Semantic semantic)
@@ -467,7 +491,7 @@ namespace LPD_Compiler.SyntacticHandler
                         if (!isErrorToken(token) && token.simbolo == "sinteiro" || token.simbolo == "sbooleano")
                         {
                             Item item;
-                            if(token.simbolo == "sinteiro")
+                            if (token.simbolo == "sinteiro")
                             {
                                 item = semantic.retornaUltimoAdd();
                                 item.tipo = string.Concat(item.tipo, "Inteiro");
@@ -499,7 +523,7 @@ namespace LPD_Compiler.SyntacticHandler
                         line = token.line;
                         message = "Dois pontos não encontrado";
                         throw new SyntacticException(token.line, "Dois pontos não encontrado");
-                    } 
+                    }
                 }
                 else
                 {
@@ -519,7 +543,7 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaExpressao(Lexicon lexicon, Semantic semantic)
         {
-            if(parenthesisCount == 0)
+            if (parenthesisCount == 0)
                 expression.Clear();
             analisaExpressaoSimples(lexicon, semantic);
 
@@ -570,7 +594,7 @@ namespace LPD_Compiler.SyntacticHandler
         {
             if (token.simbolo == "sidentificador")
             {
-                if(semantic.pesquisaTabela(token.lexema) == 1)
+                if (semantic.pesquisaTabela(token.lexema) == 1)
                 {
                     Item item = semantic.retornaUltimoAdd(); //nao sei se esta correto
                     if (item.tipo == "funcInteiro" || item.tipo == "funcBooleano")
@@ -589,7 +613,7 @@ namespace LPD_Compiler.SyntacticHandler
                     message = "Estrutura com identificador nao declarada";
                     throw new SemanticException(token.line, "Estrutura com identificador nao declarada");
                 }
-                
+
             }
             else
             {
@@ -650,6 +674,7 @@ namespace LPD_Compiler.SyntacticHandler
         {
             updateToken(lexicon);
             analisaExpressao(lexicon, semantic);
+
         }
 
         public void analisaChamadaProcedimento(Lexicon lexicon)
