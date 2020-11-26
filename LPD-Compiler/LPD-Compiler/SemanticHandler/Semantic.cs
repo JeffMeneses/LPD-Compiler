@@ -179,11 +179,11 @@ namespace LPD_Compiler.SemanticHandler
         {
             foreach (var item in tabelaDeSimbolos)
             {
-                if (item.simbolo == simbolo && item.tipo == "varInteiro")
+                if (item.simbolo == simbolo && item.tipo == "varInteiro" || item.simbolo == simbolo && item.tipo == "funcInteiro")
                 {
                     return 1;
                 }
-                else if (item.simbolo == simbolo && item.tipo == "varBooleano")
+                else if (item.simbolo == simbolo && item.tipo == "varBooleano" || item.simbolo == simbolo && item.tipo == "funcBooleano")
                 {
                     return 2;
                 }
@@ -209,6 +209,11 @@ namespace LPD_Compiler.SemanticHandler
             {
                 if (expressao.Count != 1)
                 {
+                    if (exAux[posicao] == "verdadeiro" || exAux[posicao] == "falso")
+                    {
+                        exAux[posicao] = "bool";
+                    }
+
                     if (termo == "+" || termo == "-" || termo == "*" || termo == "div")
                     {
                         if (int.TryParse(exAux[posicao - 2], out _) || retornaTipo(exAux[posicao - 2]) == 1)
@@ -218,6 +223,8 @@ namespace LPD_Compiler.SemanticHandler
                                 if ((posicao + 1) == expressao.Count)
                                     return 1; // inteiro
                                 exAux[posicao] = "1";
+                                exAux[posicao - 1] = "1";
+                                exAux[posicao - 2] = "1";
                             }
                         }
 
@@ -232,21 +239,38 @@ namespace LPD_Compiler.SemanticHandler
                                 if ((posicao + 1) == exAux.Count)
                                     return 0; // booleano
                                 exAux[posicao] = "bool";
+                                exAux[posicao - 1] = "bool";
+                                exAux[posicao - 2] = "bool";
                             }
                         }
 
                     }
                     else if (termo == "=" || termo == "!=")
                     {
-                        if (retornaTipo(exAux[posicao - 2]) == 2 || exAux[posicao - 2] == "bool")
+                        if (retornaTipo(exAux[posicao - 2]) == 2 || exAux[posicao - 2] == "bool") //bool com boolo
                         {
                             if (retornaTipo(exAux[posicao - 1]) == 2 || exAux[posicao - 1] == "bool")
                             {
                                 if ((posicao + 1) == expressao.Count)
                                     return 0; // booleano
                                 exAux[posicao] = "bool";
+                                exAux[posicao - 1] = "bool";
+                                exAux[posicao - 2] = "bool";
                             }
                         }
+
+                        if (int.TryParse(exAux[posicao - 2], out _) || retornaTipo(exAux[posicao - 2]) == 1) //int com int
+                        {
+                            if (int.TryParse(exAux[posicao - 1], out _) || retornaTipo(exAux[posicao - 1]) == 1)
+                            {
+                                if ((posicao + 1) == exAux.Count)
+                                    return 0; // booleano
+                                exAux[posicao] = "bool";
+                                exAux[posicao - 1] = "bool";
+                                exAux[posicao - 2] = "bool";
+                            }
+                        }
+
 
                     }
                     else if (termo == "-u" || termo == "+u")
@@ -256,6 +280,7 @@ namespace LPD_Compiler.SemanticHandler
                             if ((posicao + 1) == expressao.Count)
                                 return 1; // inteiro
                             exAux[posicao] = "1";
+                            exAux[posicao - 1] = "1";
                         }
 
                     }
@@ -266,6 +291,7 @@ namespace LPD_Compiler.SemanticHandler
                             if ((posicao + 1) == expressao.Count)
                                 return 0; // booleano
                             exAux[posicao] = "bool";
+                            exAux[posicao - 1] = "bool";
                         }
 
                     }
@@ -278,6 +304,8 @@ namespace LPD_Compiler.SemanticHandler
                                 if ((posicao + 1) == expressao.Count)
                                     return 0; // booleano
                                 exAux[posicao] = "bool";
+                                exAux[posicao - 1] = "bool";
+                                exAux[posicao - 2] = "bool";
                             }
                         }
 
@@ -293,6 +321,7 @@ namespace LPD_Compiler.SemanticHandler
                     {
                         return 1;
                     }
+
                 }
                 posicao++;
             }
