@@ -669,7 +669,7 @@ namespace LPD_Compiler.SyntacticHandler
                 if (semantic.pesquisaTabela(token.lexema) == 1)
                 {
                     Item item = semantic.retornaUltimoAdd(); //nao sei se esta correto
-                    if (item.tipo == "funcInteiro" || item.tipo == "funcBooleano")
+                    if ((item.tipo == "funcInteiro" || item.tipo == "funcBooleano") && semantic.pesquisaDeclVarFuncTabela(token.lexema) == 2)
                     {
                         analisaChamadaFuncao(lexicon);
                     }
@@ -757,6 +757,7 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaChamadaFuncao(Lexicon lexicon)
         {
+            expression.Add(token.lexema);
             updateToken(lexicon);
         }
 
