@@ -163,11 +163,11 @@ namespace LPD_Compiler.SemanticHandler
         {
             foreach (var item in tabelaDeSimbolos)
             {
-                if (item.simbolo == simbolo && item.tipo == "varInteiro")
+                if ((item.simbolo == simbolo) && (item.tipo == "varInteiro" || item.tipo == "funcInteiro"))
                 {
                     return 1;
                 }
-                else if (item.simbolo == simbolo && item.tipo == "varBooleano")
+                else if ((item.simbolo == simbolo) && (item.tipo == "varBooleano" || item.tipo == "funcBooleano"))
                 {
                     return 0;
                 }

@@ -24,6 +24,13 @@ namespace LPD_Compiler.SemanticHandler
             this.expression = expression;
         }
 
+        public void clearExpression()
+        {
+            expression.Clear();
+            convertedExpression.Clear();
+            stackSymbols.Clear();
+        }
+
         public void convertExpression()
         {
             string caracter;
