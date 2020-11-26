@@ -13,12 +13,17 @@ namespace LPD_Compiler.SyntacticHandler
 {
     public class Syntactic
     {
-        public Postfix postfix;
+        public Postfix postfix = new Postfix();
         public List<string> expression = new List<string>();
         public int parenthesisCount = 0;
         public Token token;
         public string message = "", flagVar = "";
         public int line = 0;
+
+        public bool isReturnDeclared = false;
+        public int ReturnDeclaredCount = 0;
+        public Stack<string> FunctionSatck = new Stack<string>();
+        public int ReturnExpectedCount = 0;
 
         public void syntacticAnalyser(Lexicon lexicon, Semantic semantic)
         {
@@ -217,6 +222,8 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaComandoSimples(Lexicon lexicon, Semantic semantic)
         {
+            isReturnDeclared = false;
+
             if (!isErrorToken(token) && token.simbolo == "sidentificador")
                 AnalisaAtribChprocedimento(lexicon, semantic);
             else if (!isErrorToken(token) && token.simbolo == "sse")
@@ -233,7 +240,7 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void AnalisaAtribChprocedimento(Lexicon lexicon, Semantic semantic)
         {
-
+            string flagFuncName;
             if (semantic.pesquisaProcTabela(token.lexema) != 0)
             {
                 analisaChamadaProcedimento(lexicon);
@@ -243,8 +250,24 @@ namespace LPD_Compiler.SyntacticHandler
                 int ret = semantic.validaAtribuicao(token.lexema);
                 if (ret != -1)
                 {
+                    flagFuncName = token.lexema;
                     updateToken(lexicon);
-                    if (!isErrorToken(token) && token.simbolo == "satribuicao")
+
+                    if (FunctionSatck.Count > 0 && flagFuncName.Equals(FunctionSatck.Peek())) // return de função
+                    {
+                        analisaAtribuicao(lexicon, semantic);
+                        if (semantic.validaCompatibilidadeTipo(postfix.convertedExpression) != ret)
+                        {
+                            line = token.line;
+                            message = "Tipos nao compativeis";
+                            throw new SemanticException(token.line, "Tipos nao compativeis");
+                        }
+                        isReturnDeclared = true;
+                        ReturnDeclaredCount++;
+                        flagFuncName = "";
+                    }
+
+                    else if (!isErrorToken(token) && token.simbolo == "satribuicao")
                     {
                         analisaAtribuicao(lexicon, semantic);
                         if (semantic.validaCompatibilidadeTipo(postfix.convertedExpression) != ret)
@@ -356,13 +379,26 @@ namespace LPD_Compiler.SyntacticHandler
         public void analisaEnquanto(Lexicon lexicon, Semantic semantic)
         {
             updateToken(lexicon);
+            postfix.clearExpression();
             analisaExpressao(lexicon, semantic);
             if (semantic.validaCompatibilidadeTipo(postfix.convertedExpression) == 0)
             {
                 if (!isErrorToken(token) && token.simbolo == "sfaca")
                 {
+                    //bool isReturnWhile = false;
+                    // TODO: CHECK RETURN ON WHILE
+
                     updateToken(lexicon);
                     analisaComandoSimples(lexicon, semantic);
+
+                    /*if (isReturnDeclared && (ReturnExpectedCount > 0))
+                    {
+                        if(isReturnWhile)
+                        {
+                            isReturnDeclared = false;
+                        }
+                    }*/
+
                 }
                 else
                 {
@@ -382,18 +418,32 @@ namespace LPD_Compiler.SyntacticHandler
         public void analisaSe(Lexicon lexicon, Semantic semantic)
         {
             updateToken(lexicon);
+            postfix.clearExpression();
             analisaExpressao(lexicon, semantic);
             if (semantic.validaCompatibilidadeTipo(postfix.convertedExpression) == 0)
             {
                 if (!isErrorToken(token) && token.simbolo == "sentao")
                 {
+                    bool ifReturnDeclared = false, elseReturnDeclared = false;
+
                     updateToken(lexicon);
                     analisaComandoSimples(lexicon, semantic);
+
+                    ifReturnDeclared = isReturnDeclared;
+
                     if (!isErrorToken(token) && token.simbolo == "ssenao")
                     {
                         updateToken(lexicon);
                         analisaComandoSimples(lexicon, semantic);
+
+                        elseReturnDeclared = isReturnDeclared;
                     }
+                    else
+                    {
+                        elseReturnDeclared = true;
+                    }
+                    isReturnDeclared = ifReturnDeclared && elseReturnDeclared;
+
                 }
                 else
                 {
@@ -480,6 +530,7 @@ namespace LPD_Compiler.SyntacticHandler
             updateToken(lexicon);
             if (!isErrorToken(token) && token.simbolo == "sidentificador")
             {
+                FunctionSatck.Push(token.lexema);
                 if (semantic.pesquisaDeclFuncTabela(token.lexema) == 0) //senao achar, nao foi declarada ainda
                 {
                     aux = token.lexema;
@@ -504,7 +555,28 @@ namespace LPD_Compiler.SyntacticHandler
                             updateToken(lexicon);
                             if (!isErrorToken(token) && token.simbolo == "sponto_virgula")
                             {
+                                ReturnExpectedCount++;
                                 analisaBloco(lexicon, semantic);
+                                ReturnExpectedCount--;
+
+                                // WARNING
+                                if(!isReturnDeclared)
+                                {
+                                    if(ReturnDeclaredCount > 0)
+                                    {
+                                        line = token.line;
+                                        message = "A última linha da função deve ser de retorno";
+                                        throw new SemanticException(token.line, "A última linha da função deve ser de retorno");
+                                    }
+                                    else
+                                    {
+                                        line = token.line;
+                                        message = "A função deve ter um retorno";
+                                        throw new SemanticException(token.line, "A função deve ter um retorno");
+                                    }
+                                }
+                                ReturnDeclaredCount = 0; //TESTE
+                                FunctionSatck.Pop();
                             }
                             //else
                             //{
@@ -673,6 +745,7 @@ namespace LPD_Compiler.SyntacticHandler
         public void analisaAtribuicao(Lexicon lexicon, Semantic semantic)
         {
             updateToken(lexicon);
+            postfix.clearExpression();
             analisaExpressao(lexicon, semantic);
 
         }
