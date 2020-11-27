@@ -33,6 +33,8 @@ namespace LPD_Compiler.SemanticHandler
 
         public void convertExpression()
         {
+            int stackPrecedencia, currentPrecedencia;
+
             string caracter;
             for (var i = 0; i < expression.Count; i++)
             {
@@ -62,7 +64,17 @@ namespace LPD_Compiler.SemanticHandler
                     case "-u":
                         if (stackSymbols.Count != 0)
                             if (menorPrecedenciaAB(caracter, stackSymbols.Peek()))
-                                desempilhaSimbolo(caracter);
+                            {
+                                if(!(caracter == "nao") && !(stackSymbols.Peek() == "nao"))
+                                {
+                                    while (stackSymbols.Count != 0 && menorPrecedenciaAB(caracter, stackSymbols.Peek()))
+                                    {
+                                        convertedExpression.Add(stackSymbols.Pop());
+                                    }
+                                }
+                                //desempilhaSimbolo(caracter);
+                                stackSymbols.Push(caracter);
+                            }
                             else
                                 empilhaSimbolo(caracter);
                         else
@@ -146,7 +158,7 @@ namespace LPD_Compiler.SemanticHandler
             {
                 case "-u":
                 case "+u":
-                case "snao": return 7;
+                case "nao": return 7;
 
                 case "*":
                 case "div": return 6;
