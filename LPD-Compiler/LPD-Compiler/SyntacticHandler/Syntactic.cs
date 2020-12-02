@@ -32,6 +32,7 @@ namespace LPD_Compiler.SyntacticHandler
         public int quantDecleredVars;
         public int quantAllocatedVars = 0;
         public int dataStackIndex = 0;
+        public string atribVarName;
 
         public void syntacticAnalyser(Lexicon lexicon, Semantic semantic)
         {
@@ -50,6 +51,7 @@ namespace LPD_Compiler.SyntacticHandler
                         analisaBloco(lexicon, semantic);
                         if (!isErrorToken(token) && token.simbolo == "sponto")
                         {
+                            codeGenerator.generate("", "HLT", "", "");
                             Console.WriteLine("Deu certo");
                             codeGenerator.test();
                             // se acabou arquivo ou é comentário
@@ -144,7 +146,7 @@ namespace LPD_Compiler.SyntacticHandler
                     {
                         if (cont == 0)//
                             flagVar = token.lexema;//
-                        semantic.insereTabela(token.lexema, "var", 0, 0); //
+                        semantic.insereTabela(token.lexema, "var", 0, quantAllocatedVars + quantDecleredVars); //
                         quantDecleredVars++;
                         updateToken(lexicon);
                         if (!isErrorToken(token) && (token.simbolo == "svirgula" || token.simbolo == "sdoispontos"))
@@ -262,6 +264,8 @@ namespace LPD_Compiler.SyntacticHandler
         public void AnalisaAtribChprocedimento(Lexicon lexicon, Semantic semantic)
         {
             string flagFuncName;
+            atribVarName = token.lexema;
+
             if (semantic.pesquisaProcTabela(token.lexema) != 0)
             {
                 analisaChamadaProcedimento(lexicon);
@@ -367,9 +371,13 @@ namespace LPD_Compiler.SyntacticHandler
                 {
                     if (semantic.pesquisaDeclVarFuncTabela(token.lexema) != 0 && semantic.validaEscrevaELeia(token.lexema) != 0)
                     {
+                        string readVarName = token.lexema;
                         updateToken(lexicon);
                         if (!isErrorToken(token) && token.simbolo == "sfecha_parenteses")
                         {
+                            codeGenerator.generate("", "LDV", semantic.getPesquisaTabela(readVarName).rotulo.ToString(), "");
+                            codeGenerator.generate("", "PRN", "", "");
+
                             updateToken(lexicon);
                         }
                         else
@@ -426,7 +434,7 @@ namespace LPD_Compiler.SyntacticHandler
                     updateToken(lexicon);
                     analisaComandoSimples(lexicon, semantic);
 
-                    codeGenerator.generate("", "JMPF", auxrot1.ToString(), "");
+                    codeGenerator.generate("", "JMP", auxrot1.ToString(), "");
                     codeGenerator.generate(auxrot2.ToString(), "NULL", "", "");
 
                     /*if (isReturnDeclared && (ReturnExpectedCount > 0))
@@ -455,6 +463,8 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaSe(Lexicon lexicon, Semantic semantic)
         {
+            int auxrot1, auxrot2;
+
             updateToken(lexicon);
             postfix.clearExpression();
             analisaExpressao(lexicon, semantic);
@@ -462,12 +472,22 @@ namespace LPD_Compiler.SyntacticHandler
             {
                 if (!isErrorToken(token) && token.simbolo == "sentao")
                 {
+                    auxrot1 = rotulo;
+                    codeGenerator.generate("", "JMPF", auxrot1.ToString(), "");
+                    rotulo++;
+
                     bool ifReturnDeclared = false, elseReturnDeclared = false;
 
                     updateToken(lexicon);
                     analisaComandoSimples(lexicon, semantic);
 
                     ifReturnDeclared = isReturnDeclared;
+
+                    auxrot2 = rotulo;
+                    codeGenerator.generate("", "JMP", auxrot2.ToString(), "");
+                    rotulo++;
+
+                    codeGenerator.generate(auxrot1.ToString(), "NULL", "", "");
 
                     if (!isErrorToken(token) && token.simbolo == "ssenao")
                     {
@@ -482,6 +502,7 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     isReturnDeclared = ifReturnDeclared && elseReturnDeclared;
 
+                    codeGenerator.generate(auxrot2.ToString(), "NULL", "", "");
                 }
                 else
                 {
@@ -681,7 +702,7 @@ namespace LPD_Compiler.SyntacticHandler
                 postfix = new Postfix(expression);
                 postfix.convertExpression();
 
-                
+                codeGenerator.generateExpression(postfix.convertedExpression, semantic);
             }
         }
 
@@ -796,10 +817,22 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaAtribuicao(Lexicon lexicon, Semantic semantic)
         {
+            Item itemTable;
+
             updateToken(lexicon);
             postfix.clearExpression();
             analisaExpressao(lexicon, semantic);
 
+            itemTable = semantic.getPesquisaTabela(atribVarName);
+
+            if (itemTable.tipo == "funcInteiro" || itemTable.tipo == "funcBooleano")
+            {
+                // Tratar
+            }
+            else
+            {
+                codeGenerator.generate("", "STR", itemTable.rotulo.ToString(), "");
+            }
         }
 
         public void analisaChamadaProcedimento(Lexicon lexicon)

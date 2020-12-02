@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LPD_Compiler.SemanticHandler;
 
 namespace LPD_Compiler.CodeGeneratorHandler
 {
@@ -87,6 +88,85 @@ namespace LPD_Compiler.CodeGeneratorHandler
             foreach (var item in outputCode)
             {
                 Console.WriteLine(item);
+            }
+        }
+
+        public void generateExpression(List<string> postFixExpression, Semantic semantic)
+        {
+            foreach(var item in postFixExpression)
+            {
+                switch(item)
+                {
+                    case "nao": generate("", "NEG", "", "");
+                        break;
+                    case "*":
+                        generate("", "MULT", "", "");
+                        break;
+                    case "div":
+                        generate("", "DIVI", "", "");
+                        break;
+                    case "-":
+                        generate("", "SUB", "", "");
+                        break;
+                    case "+":
+                        generate("", "ADD", "", "");
+                        break;
+                    case "<":
+                        generate("", "CME", "", "");
+                        break;
+                    case "<=":
+                        generate("", "CMEQ", "", "");
+                        break;
+                    case ">=":
+                        generate("", "CMAQ", "", "");
+                        break;
+                    case ">":
+                        generate("", "CMA", "", "");
+                        break;
+                    case "=":
+                        generate("", "CEQ", "", "");
+                        break;
+                    case "!=":
+                        generate("", "CDIF", "", "");
+                        break;
+                    case "e":
+                        generate("", "AND", "", "");
+                        break;
+                    case "ou":
+                        generate("", "OR", "", "");
+                        break;
+                    case "+u":
+                        break;
+                    case "-u": generate("", "INV", "", "");
+                        break;
+                    case "verdadeiro":
+                        generate("", "LDC", "1", "");
+                        break;
+                    case "falso":
+                        generate("", "LDC", "0", "");
+                        break;
+                    default:
+                        if(int.TryParse(item, out _))
+                        {
+                            generate("", "LDC", item, "");
+                        }
+                        else
+                        {
+                            Item itemTable;
+                            itemTable = semantic.getPesquisaTabela(item);
+
+                            if(itemTable.tipo == "funcInteiro" || itemTable.tipo == "funcBooleano")
+                            {
+                                generate("", "CALL", itemTable.simbolo, "");
+                                generate("", "LDV", "0", ""); // retorno da func DEVE estar na posicao 0
+                            }
+                            else
+                            {
+                                generate("", "LDV", itemTable.rotulo.ToString(), "");
+                            }
+                        }
+                        break;
+                }
             }
         }
     }
