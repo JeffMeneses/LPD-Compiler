@@ -8,6 +8,7 @@ using LPD_Compiler.FileHandler;
 using LPD_Compiler.LexiconHandler;
 using LPD_Compiler.SyntacticHandler;
 using LPD_Compiler.SemanticHandler;
+using LPD_Compiler.CodeGeneratorHandler;
 
 namespace LPD_Compiler.SyntacticHandler
 {
@@ -25,11 +26,20 @@ namespace LPD_Compiler.SyntacticHandler
         public Stack<string> FunctionSatck = new Stack<string>();
         public int ReturnExpectedCount = 0;
 
+        // codeGenerator
+        public int rotulo;
+        public CodeGenerator codeGenerator = new CodeGenerator();
+        public int quantDecleredVars;
+        public int quantAllocatedVars = 0;
+        public int dataStackIndex = 0;
+
         public void syntacticAnalyser(Lexicon lexicon, Semantic semantic)
         {
+            rotulo = 1;
             updateToken(lexicon);
             if (!isErrorToken(token) && token.simbolo == "sprograma")
             {
+                codeGenerator.generate("", "START", "", "");
                 updateToken(lexicon);
                 if (!isErrorToken(token) && token.simbolo == "sidentificador")
                 {
@@ -41,6 +51,7 @@ namespace LPD_Compiler.SyntacticHandler
                         if (!isErrorToken(token) && token.simbolo == "sponto")
                         {
                             Console.WriteLine("Deu certo");
+                            codeGenerator.test();
                             // se acabou arquivo ou é comentário
                             // return Sucesso
                         }
@@ -77,12 +88,21 @@ namespace LPD_Compiler.SyntacticHandler
         {
             updateToken(lexicon);
             analisaEtVariaveis(lexicon, semantic);
+
+            codeGenerator.generate("", "ALLOC", quantAllocatedVars.ToString(), quantDecleredVars.ToString());
+            quantAllocatedVars += quantDecleredVars;
+
             analisaSubrotinas(lexicon, semantic);
             analisaComandos(lexicon, semantic);
+
+            quantAllocatedVars -= quantDecleredVars;
+            codeGenerator.generate("", "DALLOC", quantAllocatedVars.ToString(), quantDecleredVars.ToString());
         }
 
         public void analisaEtVariaveis(Lexicon lexicon, Semantic semantic)
         {
+            quantDecleredVars = 0;
+
             if (!isErrorToken(token) && token.simbolo == "svar")
             {
                 updateToken(lexicon);
@@ -125,6 +145,7 @@ namespace LPD_Compiler.SyntacticHandler
                         if (cont == 0)//
                             flagVar = token.lexema;//
                         semantic.insereTabela(token.lexema, "var", 0, 0); //
+                        quantDecleredVars++;
                         updateToken(lexicon);
                         if (!isErrorToken(token) && (token.simbolo == "svirgula" || token.simbolo == "sdoispontos"))
                         {
@@ -301,6 +322,10 @@ namespace LPD_Compiler.SyntacticHandler
                         updateToken(lexicon);
                         if (!isErrorToken(token) && token.simbolo == "sfecha_parenteses")
                         {
+                            codeGenerator.generate("", "RD", "", "");
+                            codeGenerator.generate("", "STR", dataStackIndex.ToString(), "");
+                            dataStackIndex++;
+
                             updateToken(lexicon);
                         }
                         else
@@ -378,6 +403,12 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaEnquanto(Lexicon lexicon, Semantic semantic)
         {
+            int auxrot1, auxrot2;
+
+            auxrot1 = rotulo;
+            codeGenerator.generate(rotulo.ToString(), "NULL", "", "");
+            rotulo++;
+
             updateToken(lexicon);
             postfix.clearExpression();
             analisaExpressao(lexicon, semantic);
@@ -385,11 +416,18 @@ namespace LPD_Compiler.SyntacticHandler
             {
                 if (!isErrorToken(token) && token.simbolo == "sfaca")
                 {
+                    auxrot2 = rotulo;
+                    codeGenerator.generate("", "JMPF", rotulo.ToString(), "");
+                    rotulo++;
+
                     //bool isReturnWhile = false;
                     // TODO: CHECK RETURN ON WHILE
 
                     updateToken(lexicon);
                     analisaComandoSimples(lexicon, semantic);
+
+                    codeGenerator.generate("", "JMPF", auxrot1.ToString(), "");
+                    codeGenerator.generate(auxrot2.ToString(), "NULL", "", "");
 
                     /*if (isReturnDeclared && (ReturnExpectedCount > 0))
                     {
@@ -462,6 +500,12 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaSubrotinas(Lexicon lexicon, Semantic semantic)
         {
+            int auxrot = rotulo, flag;
+
+            codeGenerator.generate("", "JMP", rotulo.ToString(), "");
+            rotulo++;
+            flag = 1;
+
             while (!isErrorToken(token) && (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao"))
             {
                 if (!isErrorToken(token) && token.simbolo == "sprocedimento")
@@ -484,6 +528,10 @@ namespace LPD_Compiler.SyntacticHandler
                     throw new SyntacticException(token.line, "Ponto e vírgula não encontrado");
                 }
             }
+            if(flag == 1)
+            {
+                codeGenerator.generate(auxrot.ToString(), "NULL", "", "");
+            }
         }
 
         public void analisaDeclaracaoProcedimento(Lexicon lexicon, Semantic semantic)
@@ -495,7 +543,9 @@ namespace LPD_Compiler.SyntacticHandler
                 if (semantic.pesquisaDeclProcTabela(token.lexema) == 0) //se nao achou, nao existe um proc com esse id
                 {
                     aux = token.lexema;
-                    semantic.insereTabela(token.lexema, "procedimento", 0, 0); //entao insere 
+                    semantic.insereTabela(token.lexema, "procedimento", 0, rotulo); //entao insere
+                    codeGenerator.generate(rotulo.ToString(), "NULL", "", "");
+                    rotulo++;
                     updateToken(lexicon);
                     if (!isErrorToken(token) && token.simbolo == "sponto_virgula")
                     {
@@ -534,7 +584,7 @@ namespace LPD_Compiler.SyntacticHandler
                 if (semantic.pesquisaDeclFuncTabela(token.lexema) == 0) //senao achar, nao foi declarada ainda
                 {
                     aux = token.lexema;
-                    semantic.insereTabela(token.lexema, "func", 0, 0); //entao insere
+                    semantic.insereTabela(token.lexema, "func", 0, rotulo); //entao insere
                     updateToken(lexicon);
                     if (!isErrorToken(token) && token.simbolo == "sdoispontos")
                     {
@@ -630,6 +680,8 @@ namespace LPD_Compiler.SyntacticHandler
             {
                 postfix = new Postfix(expression);
                 postfix.convertExpression();
+
+                
             }
         }
 
