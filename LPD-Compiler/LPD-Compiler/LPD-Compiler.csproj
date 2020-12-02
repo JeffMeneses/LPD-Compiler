@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeGeneratorHandler\CodeGenerator.cs" />
     <Compile Include="CompilerHandler\Compiler.cs" />
     <Compile Include="FileHandler\LpdFile.cs" />
     <Compile Include="Form1.cs">

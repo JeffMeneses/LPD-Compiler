@@ -228,5 +228,6 @@ namespace LPD_Compiler.SemanticHandler
                 default: return false;
             }
         }
+
     }
 }

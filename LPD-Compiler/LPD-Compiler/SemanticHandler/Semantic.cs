@@ -333,5 +333,18 @@ namespace LPD_Compiler.SemanticHandler
         {
             return tabelaDeSimbolos.Peek();
         }
+
+        public Item getPesquisaTabela(string simbolo)
+        {
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == simbolo)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
     }
 }
