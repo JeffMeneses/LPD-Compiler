@@ -21,6 +21,8 @@ namespace LPD_Compiler.SyntacticHandler
         public string message = "", flagVar = "";
         public int line = 0;
 
+        // semantic
+        public Semantic semantic;
         public bool isReturnDeclared = false;
         public int ReturnDeclaredCount = 0;
         public Stack<string> FunctionSatck = new Stack<string>();
@@ -31,11 +33,16 @@ namespace LPD_Compiler.SyntacticHandler
         public CodeGenerator codeGenerator = new CodeGenerator();
         public int quantDecleredVars;
         public int quantAllocatedVars = 0;
+
+        public Stack<int> localDecleredVars = new Stack<int>();
+        public Stack<int> localAllocatedVars = new Stack<int>();
+
         public int dataStackIndex = 0;
         public string atribVarName;
 
         public void syntacticAnalyser(Lexicon lexicon, Semantic semantic)
         {
+            this.semantic = semantic;
             rotulo = 1;
             updateToken(lexicon);
             if (!isErrorToken(token) && token.simbolo == "sprograma")
@@ -48,9 +55,15 @@ namespace LPD_Compiler.SyntacticHandler
                     updateToken(lexicon);
                     if (!isErrorToken(token) && token.simbolo == "sponto_virgula")
                     {
+                        codeGenerator.generate("", "ALLOC", quantAllocatedVars.ToString(), "1");
+                        quantAllocatedVars += 1;
+
                         analisaBloco(lexicon, semantic);
                         if (!isErrorToken(token) && token.simbolo == "sponto")
                         {
+                            quantAllocatedVars -= 1;
+                            codeGenerator.generate("", "DALLOC", quantAllocatedVars.ToString(), "1");
+
                             codeGenerator.generate("", "HLT", "", "");
                             Console.WriteLine("Deu certo");
                             codeGenerator.test();
@@ -91,14 +104,26 @@ namespace LPD_Compiler.SyntacticHandler
             updateToken(lexicon);
             analisaEtVariaveis(lexicon, semantic);
 
-            codeGenerator.generate("", "ALLOC", quantAllocatedVars.ToString(), quantDecleredVars.ToString());
-            quantAllocatedVars += quantDecleredVars;
+            if (quantDecleredVars > 0)
+            {
+                codeGenerator.generate("", "ALLOC", quantAllocatedVars.ToString(), quantDecleredVars.ToString());
+                quantAllocatedVars += quantDecleredVars;
+            }
+                localDecleredVars.Push(quantDecleredVars);
+                localAllocatedVars.Push(quantAllocatedVars);
 
             analisaSubrotinas(lexicon, semantic);
             analisaComandos(lexicon, semantic);
 
-            quantAllocatedVars -= quantDecleredVars;
-            codeGenerator.generate("", "DALLOC", quantAllocatedVars.ToString(), quantDecleredVars.ToString());
+            if (localDecleredVars.Count > 0)
+            {
+                quantDecleredVars = localDecleredVars.Pop();
+                quantAllocatedVars = localAllocatedVars.Pop();
+
+                quantAllocatedVars -= quantDecleredVars;
+                if(quantDecleredVars > 0) codeGenerator.generate("", "DALLOC", quantAllocatedVars.ToString(), quantDecleredVars.ToString());
+            }
+            
         }
 
         public void analisaEtVariaveis(Lexicon lexicon, Semantic semantic)
@@ -315,6 +340,7 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaLeia(Lexicon lexicon, Semantic semantic)
         {
+            Item itemTable;
             updateToken(lexicon);
             if (!isErrorToken(token) && token.simbolo == "sabre_parenteses")
             {
@@ -323,11 +349,12 @@ namespace LPD_Compiler.SyntacticHandler
                 {
                     if (semantic.pesquisaDeclVarTabela(token.lexema) == 1 && semantic.validaEscrevaELeia(token.lexema) != 0) //se foi declarada
                     {
+                        itemTable = semantic.getPesquisaTabela(token.lexema);
                         updateToken(lexicon);
                         if (!isErrorToken(token) && token.simbolo == "sfecha_parenteses")
                         {
                             codeGenerator.generate("", "RD", "", "");
-                            codeGenerator.generate("", "STR", dataStackIndex.ToString(), "");
+                            codeGenerator.generate("", "STR", itemTable.rotulo.ToString(), "");
                             dataStackIndex++;
 
                             updateToken(lexicon);
@@ -540,6 +567,7 @@ namespace LPD_Compiler.SyntacticHandler
 
                 if (!isErrorToken(token) && token.simbolo == "sponto_virgula")
                 {
+                    codeGenerator.generate("", "RETURN", "", "");
                     updateToken(lexicon);
                 }
                 else
@@ -827,7 +855,7 @@ namespace LPD_Compiler.SyntacticHandler
 
             if (itemTable.tipo == "funcInteiro" || itemTable.tipo == "funcBooleano")
             {
-                // Tratar
+                codeGenerator.generate("", "STR", "0", "");
             }
             else
             {
@@ -837,6 +865,7 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaChamadaProcedimento(Lexicon lexicon)
         {
+            codeGenerator.generate("", "CALL", semantic.getPesquisaTabela(token.lexema).rotulo.ToString(), "");
             updateToken(lexicon);
         }
 

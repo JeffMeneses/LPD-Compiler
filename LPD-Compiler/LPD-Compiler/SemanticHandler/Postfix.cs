@@ -65,7 +65,7 @@ namespace LPD_Compiler.SemanticHandler
                         if (stackSymbols.Count != 0)
                             if (menorPrecedenciaAB(caracter, stackSymbols.Peek()))
                             {
-                                if(!(caracter == "nao") && !(stackSymbols.Peek() == "nao"))
+                                if(!(caracter == "nao") || !(stackSymbols.Peek() == "nao"))
                                 {
                                     while (stackSymbols.Count != 0 && menorPrecedenciaAB(caracter, stackSymbols.Peek()))
                                     {
