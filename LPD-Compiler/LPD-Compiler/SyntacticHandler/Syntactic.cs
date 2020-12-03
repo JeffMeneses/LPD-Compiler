@@ -525,7 +525,7 @@ namespace LPD_Compiler.SyntacticHandler
                     }
                     else
                     {
-                        elseReturnDeclared = true;
+                        elseReturnDeclared = false;
                     }
                     isReturnDeclared = ifReturnDeclared && elseReturnDeclared;
 
@@ -548,14 +548,18 @@ namespace LPD_Compiler.SyntacticHandler
 
         public void analisaSubrotinas(Lexicon lexicon, Semantic semantic)
         {
-            int auxrot = rotulo, flag;
+            int auxrot = rotulo, flag = 0;
 
-            codeGenerator.generate("", "JMP", rotulo.ToString(), "");
-            rotulo++;
-            flag = 1;
+            if (!isErrorToken(token) && (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao"))
+            {
+                codeGenerator.generate("", "JMP", rotulo.ToString(), "");
+                rotulo++;
+                flag = 1;
+            }
 
             while (!isErrorToken(token) && (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao"))
             {
+
                 if (!isErrorToken(token) && token.simbolo == "sprocedimento")
                 {
                     analisaDeclaracaoProcedimento(lexicon, semantic);
@@ -634,6 +638,8 @@ namespace LPD_Compiler.SyntacticHandler
                 {
                     aux = token.lexema;
                     semantic.insereTabela(token.lexema, "func", 0, rotulo); //entao insere
+                    codeGenerator.generate(rotulo.ToString(), "NULL", "", "");
+                    rotulo++;
                     updateToken(lexicon);
                     if (!isErrorToken(token) && token.simbolo == "sdoispontos")
                     {
