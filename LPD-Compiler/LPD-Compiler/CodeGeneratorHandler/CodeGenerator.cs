@@ -157,7 +157,7 @@ namespace LPD_Compiler.CodeGeneratorHandler
 
                             if(itemTable.tipo == "funcInteiro" || itemTable.tipo == "funcBooleano")
                             {
-                                generate("", "CALL", itemTable.simbolo, "");
+                                generate("", "CALL", itemTable.rotulo.ToString(), "");
                                 generate("", "LDV", "0", ""); // retorno da func DEVE estar na posicao 0
                             }
                             else
