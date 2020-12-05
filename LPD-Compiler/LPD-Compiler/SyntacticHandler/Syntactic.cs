@@ -40,7 +40,7 @@ namespace LPD_Compiler.SyntacticHandler
         public int dataStackIndex = 0;
         public string atribVarName;
 
-        public void syntacticAnalyser(Lexicon lexicon, Semantic semantic)
+        public List<string> syntacticAnalyser(Lexicon lexicon, Semantic semantic)
         {
             this.semantic = semantic;
             rotulo = 1;
@@ -66,7 +66,8 @@ namespace LPD_Compiler.SyntacticHandler
 
                             codeGenerator.generate("", "HLT", "", "");
                             Console.WriteLine("Deu certo");
-                            codeGenerator.test();
+                            //codeGenerator.test();
+                            return codeGenerator.outputCode;
                             // se acabou arquivo ou é comentário
                             // return Sucesso
                         }
