@@ -62,5 +62,23 @@ namespace LPD_Compiler.FileHandler
             if (currentLine >= countLines) return true;
             return false;
         }
+
+        public void createAssemblyFile(List<string> outputCode)
+        {
+            FileStream fs = new FileStream("assembly.txt", FileMode.Create, FileAccess.Write);
+            StreamWriter m_streamWriter = new StreamWriter(fs);
+            m_streamWriter.Flush();
+            // Escreve para o arquivo usando a classe StreamWriter
+            m_streamWriter.BaseStream.Seek(0, SeekOrigin.Begin);
+
+            foreach (var item in outputCode)
+            {
+                // escreve no controle richtextbox
+                m_streamWriter.WriteLine(item);
+            }
+            // fecha o arquivo
+            m_streamWriter.Flush();
+            m_streamWriter.Close();
+        }
     }
 }

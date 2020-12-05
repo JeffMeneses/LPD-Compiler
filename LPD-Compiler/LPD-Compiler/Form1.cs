@@ -97,28 +97,7 @@ namespace LPD_Compiler
 
         private void sairToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            try
-            {
-                // Pega o nome do arquivo para salvar
-                if (this.saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    // abre um stream para escrita e cria um StreamWriter para implementar o stream
-                    FileStream fs = new FileStream(saveFileDialog1.FileName, FileMode.OpenOrCreate, FileAccess.Write);
-                    StreamWriter m_streamWriter = new StreamWriter(fs);
-                    m_streamWriter.Flush();
-                    // Escreve para o arquivo usando a classe StreamWriter
-                    m_streamWriter.BaseStream.Seek(0, SeekOrigin.Begin);
-                    // escreve no controle richtextbox
-                    m_streamWriter.Write(this.richTextBox1.Text);
-                    // fecha o arquivo
-                    m_streamWriter.Flush();
-                    m_streamWriter.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro : " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            this.Close();
         }
 
         private void compilarToolStripMenuItem_Click(object sender, EventArgs e)
@@ -294,6 +273,57 @@ namespace LPD_Compiler
         private void Form1_Load_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void salvarComoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Pega o nome do arquivo para salvar
+                if (this.saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    // abre um stream para escrita e cria um StreamWriter para implementar o stream
+                    FileStream fs = new FileStream(saveFileDialog1.FileName, FileMode.OpenOrCreate, FileAccess.Write);
+                    StreamWriter m_streamWriter = new StreamWriter(fs);
+                    m_streamWriter.Flush();
+                    // Escreve para o arquivo usando a classe StreamWriter
+                    m_streamWriter.BaseStream.Seek(0, SeekOrigin.Begin);
+                    // escreve no controle richtextbox
+                    m_streamWriter.Write(this.richTextBox1.Text);
+                    // fecha o arquivo
+                    m_streamWriter.Flush();
+                    m_streamWriter.Close();
+                    lpdFile.name = saveFileDialog1.FileName;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro : " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void salvarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if(lpdFile.name != null)
+                { 
+                    FileStream fs = new FileStream(lpdFile.name, FileMode.Create, FileAccess.Write);
+                    StreamWriter m_streamWriter = new StreamWriter(fs);
+                    m_streamWriter.Flush();
+                    // Escreve para o arquivo usando a classe StreamWriter
+                    m_streamWriter.BaseStream.Seek(0, SeekOrigin.Begin);
+                    // escreve no controle richtextbox
+                    m_streamWriter.Write(this.richTextBox1.Text);
+                    // fecha o arquivo
+                    m_streamWriter.Flush();
+                    m_streamWriter.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro : " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

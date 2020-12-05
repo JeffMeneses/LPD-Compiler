@@ -35,7 +35,8 @@ namespace LPD_Compiler.CompilerHandler
 
             try
             {
-                syntactic.syntacticAnalyser(lexicon, semantic);
+                List<string> output = syntactic.syntacticAnalyser(lexicon, semantic);
+                lpdFile.createAssemblyFile(output);
             }
             catch (LexiconException ex)
             {
