@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Documents;
 using LPD_Compiler.FileHandler;
 using LPD_Compiler.LexiconHandler;
 using LPD_Compiler.CompilerHandler;
@@ -27,19 +28,24 @@ namespace LPD_Compiler
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        /*private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }*/
+
+        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+            
+        }
+
+        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
 
         }
 
-        private void arquivoToolStripMenuItem_Click(object sender, EventArgs e)
+        private void abrirToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void abrirToolStripMenuItem1_Click(object sender, EventArgs e) //abrir - http://www.macoratti.net/15/05/c_rctbp1.htm
-        {
-            dataGridView1.Rows.Clear();
+            //dataGridView1.Rows.Clear();
             lpdFile = new LpdFile();
             int i = 1;
             string s;
@@ -87,10 +93,9 @@ namespace LPD_Compiler
                     MessageBox.Show("Erro : " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-
         }
 
-        private void sairToolStripMenuItem_Click(object sender, EventArgs e) //salvar
+        private void sairToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             try
             {
@@ -114,60 +119,179 @@ namespace LPD_Compiler
             {
                 MessageBox.Show("Erro : " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
         }
 
-        private void toolStripMenuItem1_Click(object sender, EventArgs e) //Compilar
+        private void compilarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            dataGridView1.Rows.Clear();
+            //dataGridView1.Rows.Clear();
             int index = 0;
-            if (lpdFile.name != null)
+            lpdFile = new LpdFile();
+
+            if(openFileDialog1.FileName != "") lpdFile.name = openFileDialog1.FileName;
+
+            if (lpdFile.name == null)
+            {
+                //MessageBox.Show("Você precisa abrir um arquivo primeiro!\n", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                FileStream fs = new FileStream("temporary.txt", FileMode.Create, FileAccess.Write);
+                StreamWriter m_streamWriter = new StreamWriter(fs);
+                m_streamWriter.Flush();
+                // Escreve para o arquivo usando a classe StreamWriter
+                m_streamWriter.BaseStream.Seek(0, SeekOrigin.Begin);
+                // escreve no controle richtextbox
+                m_streamWriter.Write(this.richTextBox1.Text);
+                // fecha o arquivo
+                m_streamWriter.Flush();
+                m_streamWriter.Close();
+
+                lpdFile.name = "temporary.txt";
+            }
+
+            lpdFile.readFile(lpdFile.name);
+
+            if(lpdFile.content.Count() == 0) MessageBox.Show("Você precisa abrir um arquivo primeiro!\n", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            else
             {
                 compiler = new Compiler();
-                lpdFile.readFile(lpdFile.name);
                 compiler.runCompiler(lpdFile);
                 if (compiler.returnError() != 0)
                 {
-                    int n = dataGridView1.Rows.Add();
-                    dataGridView1.Rows[n].Cells[0].Value = compiler.syntactic.line;
-                    dataGridView1.Rows[n].Cells[1].Value = compiler.syntactic.message;
-                    index = (compiler.syntactic.line -1);
-                    richTextBox1.Select(richTextBox1.GetFirstCharIndexFromLine(index), richTextBox1.Lines[index].Length);
-                    richTextBox1.SelectionColor = Color.Red;
-                    
+                    //int n = dataGridView1.Rows.Add();
+                    //dataGridView1.Rows[n].Cells[0].Value = compiler.syntactic.line;
+                    //dataGridView1.Rows[n].Cells[1].Value = compiler.syntactic.message;
+                    index = (compiler.syntactic.line - 1);
+                    try
+                    {
+                        richTextBox1.Select(richTextBox1.GetFirstCharIndexFromLine(index), richTextBox1.Lines[index].Length);
+                        richTextBox1.SelectionColor = Color.Red;
+                    }
+                    catch(Exception)
+                    {
+
+                    }
+
                 }
+            }
+        }
+
+        // NEW DESIGN CODE
+        public int getWidth()
+        {
+            int w = 25;
+            // get total lines of richTextBox1    
+            int line = richTextBox1.Lines.Length;
+
+            if (line <= 99)
+            {
+                w = 20 + (int)richTextBox1.Font.Size;
+            }
+            else if (line <= 999)
+            {
+                w = 30 + (int)richTextBox1.Font.Size;
             }
             else
             {
-                MessageBox.Show("Você precisa abrir um arquivo primeiro!\n", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                w = 50 + (int)richTextBox1.Font.Size;
+            }
+
+            return w;
+        }
+
+        public void AddLineNumbers()
+        {
+            // create & set Point pt to (0,0)    
+            Point pt = new Point(0, 0);
+            // get First Index & First Line from richTextBox1    
+            int First_Index = richTextBox1.GetCharIndexFromPosition(pt);
+            int First_Line = richTextBox1.GetLineFromCharIndex(First_Index);
+            // set X & Y coordinates of Point pt to ClientRectangle Width & Height respectively    
+            pt.X = ClientRectangle.Width;
+            pt.Y = ClientRectangle.Height;
+            // get Last Index & Last Line from richTextBox1    
+            int Last_Index = richTextBox1.GetCharIndexFromPosition(pt);
+            int Last_Line = richTextBox1.GetLineFromCharIndex(Last_Index);
+            // set Center alignment to LineNumberTextBox    
+            LineNumberTextBox.SelectionAlignment = HorizontalAlignment.Center;
+            // set LineNumberTextBox text to null & width to getWidth() function value    
+            LineNumberTextBox.Text = "";
+            LineNumberTextBox.Width = getWidth();
+            // now add each line number to LineNumberTextBox upto last line    
+            for (int i = First_Line; i <= Last_Line + 1; i++)
+            {
+                LineNumberTextBox.Text += i + 1 + "\n";
             }
         }
 
-        private void richTextBox1_TextChanged(object sender, EventArgs e) //Codigo
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            LineNumberTextBox.Font = richTextBox1.Font;
+            LineNumberTextBox.ForeColor = Color.Green;
+            richTextBox1.Select();
+            AddLineNumbers();
+        }
+
+        private void richTextBox1_SelectionChanged(object sender, EventArgs e)
+        {
+            Point pt = richTextBox1.GetPositionFromCharIndex(richTextBox1.SelectionStart);
+            if (pt.X == 1)
+            {
+                AddLineNumbers();
+            }
+        }
+
+        private void richTextBox1_VScroll(object sender, EventArgs e)
+        {
+            LineNumberTextBox.Text = "";
+            AddLineNumbers();
+            LineNumberTextBox.Invalidate();
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (richTextBox1.Text == "")
+            {
+                AddLineNumbers();
+            }
+        }
+
+        private void richTextBox1_FontChanged(object sender, EventArgs e)
+        {
+            LineNumberTextBox.Font = richTextBox1.Font;
+            richTextBox1.Select();
+            AddLineNumbers();
+        }
+
+        private void LineNumberTextBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            richTextBox1.Select();
+            LineNumberTextBox.DeselectAll();
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            AddLineNumbers();
+        }
+
+        private void richTextBox2_TextChanged(object sender, EventArgs e)
         {
 
         }
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e) //Console
-        {
 
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            ControlPaint.DrawBorder(e.Graphics, e.ClipRectangle, Color.Green, ButtonBorderStyle.Solid);
         }
 
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+        private void panel2_Paint(object sender, PaintEventArgs e)
         {
-            
+            ControlPaint.DrawBorder(e.Graphics, e.ClipRectangle, Color.Green, ButtonBorderStyle.Solid);
         }
 
-        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
+        private void panel3_Paint(object sender, PaintEventArgs e)
         {
-
+            ControlPaint.DrawBorder(e.Graphics, e.ClipRectangle, Color.Green, ButtonBorderStyle.Dashed);
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
+        private void Form1_Load_1(object sender, EventArgs e)
         {
 
         }
