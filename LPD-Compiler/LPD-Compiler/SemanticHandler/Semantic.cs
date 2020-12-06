@@ -135,6 +135,17 @@ namespace LPD_Compiler.SemanticHandler
             }
             return 0;
         }
+        public int pesquisaFuncTabela(string simbolo)
+        {
+            foreach (var item in tabelaDeSimbolos)
+            {
+                if (item.simbolo == simbolo && (item.tipo == "funcInteiro" || item.tipo == "funcBooleano"))
+                {
+                    return 1;
+                }
+            }
+            return 0;
+        }
         public int pesquisaTabela(string simbolo)
         {
             foreach (var item in tabelaDeSimbolos)
