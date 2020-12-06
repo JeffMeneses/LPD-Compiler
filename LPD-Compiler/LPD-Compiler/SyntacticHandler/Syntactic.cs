@@ -328,7 +328,15 @@ namespace LPD_Compiler.SyntacticHandler
                             throw new SemanticException(token.line, "Tipos nao compativeis");
                         }
                     }
-
+                    else
+                    {
+                        if (semantic.pesquisaFuncTabela(flagFuncName) != 0)
+                        {
+                            line = token.line;
+                            message = "Chamada de função inválida";
+                            throw new SemanticException(token.line, "Chamada de função inválida");
+                        }
+                    }
                 }
                 else
                 {
@@ -403,7 +411,13 @@ namespace LPD_Compiler.SyntacticHandler
                         updateToken(lexicon);
                         if (!isErrorToken(token) && token.simbolo == "sfecha_parenteses")
                         {
-                            codeGenerator.generate("", "LDV", semantic.getPesquisaTabela(readVarName).rotulo.ToString(), "");
+                            if (semantic.getPesquisaTabela(readVarName).tipo == "funcInteiro" || semantic.getPesquisaTabela(readVarName).tipo == "funcBooleano")
+                            {
+                                codeGenerator.generate("", "CALL", semantic.getPesquisaTabela(readVarName).rotulo.ToString(), "");
+                                codeGenerator.generate("", "LDV", "0", "");
+                            }
+                            else
+                                codeGenerator.generate("", "LDV", semantic.getPesquisaTabela(readVarName).rotulo.ToString(), "");
                             codeGenerator.generate("", "PRN", "", "");
 
                             updateToken(lexicon);
