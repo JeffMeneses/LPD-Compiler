@@ -497,7 +497,7 @@ namespace LPD_Compiler.SyntacticHandler
             }
             else
             {
-                line = token.line;
+                line = token.line-1;
                 message = "Expressao do 'enquanto' nao booleana";
                 throw new SemanticException(token.line, "Expressao do 'enquanto' nao booleana");
             }
@@ -555,7 +555,7 @@ namespace LPD_Compiler.SyntacticHandler
             }
             else
             {
-                line = token.line;
+                line = token.line-1;
                 message = "Expressao do 'se' nao booleana";
                 throw new SemanticException(token.line, "Expressao do 'se' nao booleana");
             }
