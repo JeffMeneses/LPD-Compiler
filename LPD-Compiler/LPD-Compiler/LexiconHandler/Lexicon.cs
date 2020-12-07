@@ -35,7 +35,7 @@ namespace LPD_Compiler.LexiconHandler
                         //throw new LexiconException(beginCommentLine + 1);
                         {
                             Token tokenError = new Token();
-                            tokenError.simbolo = "serro";
+                            tokenError.simbolo = "serro_comentario";
                             tokenError.line = beginCommentLine + 1;
                             listTokens.Add(tokenError);
                             return;
@@ -63,7 +63,7 @@ namespace LPD_Compiler.LexiconHandler
                             //throw new LexiconException(beginCommentLine + 1);
                             {
                                 Token tokenError = new Token();
-                                tokenError.simbolo = "serro";
+                                tokenError.simbolo = "serro_comentario";
                                 tokenError.line = beginCommentLine + 1;
                                 listTokens.Add(tokenError);
                                 return;

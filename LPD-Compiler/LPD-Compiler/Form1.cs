@@ -93,6 +93,8 @@ namespace LPD_Compiler
                     MessageBox.Show("Erro : " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+            AddLineNumbers();
+            richTextBox2.Text = "";
         }
 
         private void sairToolStripMenuItem_Click_1(object sender, EventArgs e)
@@ -103,6 +105,7 @@ namespace LPD_Compiler
         private void compilarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //dataGridView1.Rows.Clear();
+            richTextBox2.Text = "";
             int index = 0;
             lpdFile = new LpdFile();
 
@@ -137,6 +140,7 @@ namespace LPD_Compiler
                     //int n = dataGridView1.Rows.Add();
                     //dataGridView1.Rows[n].Cells[0].Value = compiler.syntactic.line;
                     //dataGridView1.Rows[n].Cells[1].Value = compiler.syntactic.message;
+                    richTextBox2.Text = "Linha "+compiler.syntactic.line+":"+" "+compiler.syntactic.message;
                     index = (compiler.syntactic.line - 1);
                     try
                     {
@@ -148,6 +152,10 @@ namespace LPD_Compiler
 
                     }
 
+                }
+                else
+                {
+                    richTextBox2.Text = "Compilado com sucesso!";
                 }
             }
         }
