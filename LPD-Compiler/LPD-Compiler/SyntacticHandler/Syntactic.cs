@@ -74,29 +74,33 @@ namespace LPD_Compiler.SyntacticHandler
                         else
                         {
                             line = token.line;
-                            message = "Ponto final não encontrado";
-                            throw new SyntacticException(token.line, "Ponto final não encontrado");
+                            //message = "Ponto final não encontrado";
+                            message = "'" + token.lexema + "'" + " encontrado, mas era esperado '.'";
+                            throw new SyntacticException(token.line, message);
                         }
                     }
                     else
                     {
                         line = token.line;
-                        message = "Ponto e vírgula não encontrado";
-                        throw new SyntacticException(token.line, "Ponto e vírgula não encontrado");
+                        //message = "Ponto e vírgula não encontrado";
+                        message = "'" + token.lexema + "'" + " encontrado, mas era esperado ';'";
+                        throw new SyntacticException(token.line, message);
                     }
                 }
                 else
                 {
                     line = token.line;
-                    message = "Identificador não encontrado";
-                    throw new SyntacticException(token.line, "Identificador não encontrado");
+                    //message = "Identificador não encontrado";
+                    message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'identificador'";
+                    throw new SyntacticException(token.line, message);
                 }
             }
             else
             {
                 line = token.line;
-                message = "Palavra reservada 'programa' não encontrada";
-                throw new SyntacticException(token.line, "Palavra reservada 'programa' não encontrada");
+                //message = "Palavra reservada 'programa' não encontrada";
+                message = "'"+token.lexema + "'" + " encontrado, mas era esperado 'programa'";
+                throw new SyntacticException(token.line, message);
             }
         }
 
@@ -146,16 +150,18 @@ namespace LPD_Compiler.SyntacticHandler
                         else
                         {
                             line = token.line;
-                            message = "Ponto e vírgula não encontrado";
-                            throw new SyntacticException(token.line, "Ponto e vírgula não encontrado");
+                            //message = "Ponto e vírgula não encontrado";
+                            message = "'" + token.lexema + "'" + " encontrado, mas era esperado ';'";
+                            throw new SyntacticException(token.line, message);
                         }
                     }
                 }
                 else
                 {
                     line = token.line;
-                    message = "Identificador não encontrado";
-                    throw new SyntacticException(token.line, "Identificador não encontrado");
+                    //message = "Identificador não encontrado";
+                    message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'identificador'";
+                    throw new SyntacticException(token.line, message);
                 }
             }
         }
@@ -183,16 +189,18 @@ namespace LPD_Compiler.SyntacticHandler
                                 if (!isErrorToken(token) && token.simbolo == "sdoispontos")
                                 {
                                     line = token.line;
-                                    message = "Dois pontos não encontrado";
-                                    throw new SyntacticException(token.line, "Dois pontos não encontrado");
+                                    //message = "Dois pontos não encontrado";
+                                    message = "'" + token.lexema + "'" + " encontrado, mas era esperado ':'";
+                                    throw new SyntacticException(token.line, message);
                                 }
                             }
                         }
                         else
                         {
                             line = token.line;
-                            message = "Vírgula ou dois pontos não encontrado";
-                            throw new SyntacticException(token.line, "Vírgula ou dois pontos não encontrado");
+                            //message = "Vírgula ou dois pontos não encontrado";
+                            message = "'" + token.lexema + "'" + " encontrado, mas era esperado ', ou :'";
+                            throw new SyntacticException(token.line, message);
                         }
                     }
                     else  //se ha duplicidade
@@ -205,8 +213,9 @@ namespace LPD_Compiler.SyntacticHandler
                 else
                 {
                     line = token.line;
-                    message = "Identificador não encontrado";
-                    throw new SyntacticException(token.line, "Identificador não encontrado");
+                    //message = "Identificador não encontrado";
+                    message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'identificador'";
+                    throw new SyntacticException(token.line, message);
                 }
                 cont++;//
             } while (token.simbolo != "sdoispontos");
@@ -219,8 +228,9 @@ namespace LPD_Compiler.SyntacticHandler
             if (!isErrorToken(token) && (token.simbolo != "sinteiro" && token.simbolo != "sbooleano"))
             {
                 line = token.line;
-                message = "Tipo inteiro ou booleano não encontrado";
-                throw new SyntacticException(token.line, "Tipo inteiro ou booleano não encontrado");
+                //message = "Tipo inteiro ou booleano não encontrado";
+                message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'tipo inteiro ou booleano'";
+                throw new SyntacticException(token.line, message);
             }
             else
             {
@@ -255,8 +265,9 @@ namespace LPD_Compiler.SyntacticHandler
                     else
                     {
                         line = token.line;
-                        message = "Ponto e vírgula não encontrado";
-                        throw new SyntacticException(token.line, "Ponto e vírgula não encontrado");
+                        //message = "Ponto e vírgula não encontrado";
+                        message = "'" + token.lexema + "'" + " encontrado, mas era esperado ';'";
+                        throw new SyntacticException(token.line, message);
                     }
                 }
                 updateToken(lexicon);
@@ -264,8 +275,9 @@ namespace LPD_Compiler.SyntacticHandler
             else
             {
                 line = token.line;
-                message = "Inicio não encontrado";
-                throw new SyntacticException(token.line, "Inicio não encontrado");
+                //message = "Inicio não encontrado";
+                message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'inicio'";
+                throw new SyntacticException(token.line, message);
             }
         }
 
@@ -371,8 +383,9 @@ namespace LPD_Compiler.SyntacticHandler
                         else
                         {
                             line = token.line;
-                            message = "Fecha parentes não encontrado";
-                            throw new SyntacticException(token.line, "Fecha parentes não encontrado");
+                            //message = "Fecha parentes não encontrado";
+                            message = "'" + token.lexema + "'" + " encontrado, mas era esperado ')'";
+                            throw new SyntacticException(token.line, message);
                         }
                     }
                     else
@@ -385,14 +398,16 @@ namespace LPD_Compiler.SyntacticHandler
                 else
                 {
                     line = token.line;
-                    message = "Identificador não encontrado";
-                    throw new SyntacticException(token.line, "Identificador não encontrado");
+                    //message = "Identificador não encontrado";
+                    message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'identificador'";
+                    throw new SyntacticException(token.line, message);
                 }
             }
             else
             {
                 line = token.line;
-                message = "Abre parentes não encontrado";
+                //message = "Abre parentes não encontrado";
+                message = "'" + token.lexema + "'" + " encontrado, mas era esperado '('";
                 throw new SyntacticException(token.line, "Abre parentes não encontrado");
             }
         }
@@ -425,8 +440,9 @@ namespace LPD_Compiler.SyntacticHandler
                         else
                         {
                             line = token.line;
-                            message = "Fecha parentes não encontrado";
-                            throw new SyntacticException(token.line, "Fecha parentes não encontrado");
+                            //message = "Fecha parentes não encontrado";
+                            message = "'" + token.lexema + "'" + " encontrado, mas era esperado ')'";
+                            throw new SyntacticException(token.line, message);
                         }
                     }
                     else
@@ -439,15 +455,17 @@ namespace LPD_Compiler.SyntacticHandler
                 else
                 {
                     line = token.line;
-                    message = "Identificador não encontrado";
-                    throw new SyntacticException(token.line, "Identificador não encontrado");
+                    //message = "Identificador não encontrado";
+                    message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'identificador'";
+                    throw new SyntacticException(token.line, message);
                 }
             }
             else
             {
                 line = token.line;
-                message = "Abre parentes não encontrado";
-                throw new SyntacticException(token.line, "Abre parentes não encontrado");
+                //message = "Abre parentes não encontrado";
+                message = "'" + token.lexema + "'" + " encontrado, mas era esperado '('";
+                throw new SyntacticException(token.line, message);
             }
         }
 
@@ -491,13 +509,14 @@ namespace LPD_Compiler.SyntacticHandler
                 else
                 {
                     line = token.line;
-                    message = "Faça não encontrado";
-                    throw new SyntacticException(token.line, "Faça não encontrado");
+                    //message = "Faça não encontrado";
+                    message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'faca'";
+                    throw new SyntacticException(token.line, message);
                 }
             }
             else
             {
-                line = token.line;
+                line = token.line-1;
                 message = "Expressao do 'enquanto' nao booleana";
                 throw new SemanticException(token.line, "Expressao do 'enquanto' nao booleana");
             }
@@ -549,13 +568,14 @@ namespace LPD_Compiler.SyntacticHandler
                 else
                 {
                     line = token.line;
-                    message = "Então não encontrado";
-                    throw new SyntacticException(token.line, "Então não encontrado");
+                    //message = "Então não encontrado";
+                    message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'entao'";
+                    throw new SyntacticException(token.line, message);
                 }
             }
             else
             {
-                line = token.line;
+                line = token.line-1;
                 message = "Expressao do 'se' nao booleana";
                 throw new SemanticException(token.line, "Expressao do 'se' nao booleana");
             }
@@ -592,8 +612,9 @@ namespace LPD_Compiler.SyntacticHandler
                 else
                 {
                     line = token.line;
-                    message = "Ponto e vírgula não encontrado";
-                    throw new SyntacticException(token.line, "Ponto e vírgula não encontrado");
+                    //message = "Ponto e vírgula não encontrado";
+                    message = "'" + token.lexema + "'" + " encontrado, mas era esperado ';'";
+                    throw new SyntacticException(token.line, message);
                 }
             }
             if(flag == 1)
@@ -622,8 +643,9 @@ namespace LPD_Compiler.SyntacticHandler
                     else
                     {
                         line = token.line;
-                        message = "Identificador não encontrado";
-                        throw new SyntacticException(token.line, "Identificador não encontrado");
+                        //message = "Identificador não encontrado";
+                        message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'identificador'";
+                        throw new SyntacticException(token.line, message);
                     }
                 }
                 else
@@ -636,8 +658,9 @@ namespace LPD_Compiler.SyntacticHandler
             else
             {
                 line = token.line;
-                message = "Ponto e vírgula não encontrado";
-                throw new SyntacticException(token.line, "Ponto e vírgula não encontrado");
+                //message = "Ponto e vírgula não encontrado";
+                message = "'" + token.lexema + "'" + " encontrado, mas era esperado ';'";
+                throw new SyntacticException(token.line, message);
             }
             semantic.desempilhaTabela(aux);
         }
@@ -706,15 +729,17 @@ namespace LPD_Compiler.SyntacticHandler
                         else
                         {
                             line = token.line;
-                            message = "Tipo inteiro ou booleano não encontrado";
-                            throw new SyntacticException(token.line, "Tipo inteiro ou booleano não encontrado");
+                            //message = "Tipo inteiro ou booleano não encontrado";
+                            message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'tipo inteiro ou booleano'";
+                            throw new SyntacticException(token.line, message);
                         }
                     }
                     else
                     {
                         line = token.line;
-                        message = "Dois pontos não encontrado";
-                        throw new SyntacticException(token.line, "Dois pontos não encontrado");
+                        //message = "Dois pontos não encontrado";
+                        message = "'" + token.lexema + "'" + " encontrado, mas era esperado ':'";
+                        throw new SyntacticException(token.line, message);
                     }
                 }
                 else
@@ -727,8 +752,9 @@ namespace LPD_Compiler.SyntacticHandler
             else
             {
                 line = token.line;
-                message = "Identificador não encontrado";
-                throw new SyntacticException(token.line, "Identificador não encontrado");
+                //message = "Identificador não encontrado";
+                message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'identificador'";
+                throw new SyntacticException(token.line, message);
             }
             semantic.desempilhaTabela(aux);
         }
@@ -841,8 +867,9 @@ namespace LPD_Compiler.SyntacticHandler
                             else
                             {
                                 line = token.line;
-                                message = "Fecha parenteses não encontrado";
-                                throw new SyntacticException(token.line, "Fecha parenteses não encontrado");
+                                //message = "Fecha parenteses não encontrado";
+                                message = "'" + token.lexema + "'" + " encontrado, mas era esperado ')'";
+                                throw new SyntacticException(token.line, message);
                             }
                         }
                         else
@@ -855,8 +882,9 @@ namespace LPD_Compiler.SyntacticHandler
                             else
                             {
                                 line = token.line;
-                                message = "Verdadeiro ou falso não encontrado";
-                                throw new SyntacticException(token.line, "Verdadeiro ou falso não encontrado");
+                                //message = "Verdadeiro ou falso não encontrado";
+                                message = "'" + token.lexema + "'" + " encontrado, mas era esperado 'expressao'";
+                                throw new SyntacticException(token.line, message);
                             }
                         }
                     }
@@ -902,7 +930,13 @@ namespace LPD_Compiler.SyntacticHandler
             {
                 line = token.line;
                 message = "Token não reconhecido";
-                throw new LexiconException(token.line);
+                throw new LexiconException(token.line, "Token não reconhecido");
+            }
+            else if (token.simbolo == "serro_comentario")
+            {
+                line = token.line;
+                message = "Token não reconhecido";
+                throw new LexiconException(token.line, "Comentário iniciado mas não finalizado");
             }
             return false;
         }
@@ -912,8 +946,9 @@ namespace LPD_Compiler.SyntacticHandler
             if (lexicon.i >= lexicon.listTokens.Count)
             {
                 line = token.line;
-                message = "Ponto final não encontrado";
-                throw new SyntacticException(token.line, "Ponto final não encontrado");
+                //message = "Ponto final não encontrado";
+                message = "'" + token.lexema + "'" + " encontrado, mas era esperado '.'";
+                throw new SyntacticException(token.line, message);
             }
 
             token = lexicon.readToken();

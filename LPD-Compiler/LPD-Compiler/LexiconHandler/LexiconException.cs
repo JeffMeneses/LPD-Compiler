@@ -13,8 +13,8 @@ namespace LPD_Compiler.LexiconHandler
 
         }
 
-        public LexiconException(int line)
-            :base(String.Format("Unknown token found on line {0}", line))
+        public LexiconException(int line, string message)
+            :base(String.Format("{1} na linha {0}.", line, message))
         {
 
         }
